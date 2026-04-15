@@ -17,7 +17,7 @@ const FITS = {
   bestie: {
     key: "bestie",
     name: "BESTIE",
-    desc: "mid-rise, barrel leg.\nMi-taille, jambe baril.",
+    desc: "Mid-rise, barrel leg.\nMi-taille, jambe baril.",
   },
   pleated_trouser: {
     key: "pleated_trouser",
@@ -42,7 +42,7 @@ const FITS = {
   groovy_guy: {
     key: "groovy_guy",
     name: "GROOVY GUY",
-    desc: "Bootcut, semi-flared leg.\nJean semi-évasé.",
+    desc: "Bootcut, semi-flared leg.\nJambe semi-évasé.",
   },
   maudie: {
     key: "maudie",
@@ -200,26 +200,34 @@ function ensurePrintStyles() {
 }
 
 function wrapText(text, maxCharsPerLine = 32) {
-  const words = text.split(" ");
+  const paragraphs = text.split("\n");   // 👈 split first
   const lines = [];
-  let current = "";
 
-  for (const word of words) {
-    const test = current ? `${current} ${word}` : word;
-    if (test.length <= maxCharsPerLine) {
-      current = test;
-    } else {
-      if (current) lines.push(current);
-      current = word;
+  for (const paragraph of paragraphs) {
+    const words = paragraph.split(" ");
+    let current = "";
+
+    for (const word of words) {
+      const test = current ? `${current} ${word}` : word;
+      if (test.length <= maxCharsPerLine) {
+        current = test;
+      } else {
+        if (current) lines.push(current);
+        current = word;
+      }
     }
+
+    if (current) lines.push(current);
+
+    // add a small break between lines
+    lines.push(""); // blank line (optional spacing)
   }
 
-  if (current) lines.push(current);
   return lines;
 }
-
 function Label({ fitName, desc, size }) {
-  const descLines = wrapText(desc, 28);
+  const descLines = wrapText(desc, 30);
+  const isLongFit = fitName.length > 12;
 
   return (
     <div
@@ -229,138 +237,140 @@ function Label({ fitName, desc, size }) {
         background: "white",
       }}
     >
-<svg
-  viewBox="0 0 108 288"
-  width="100%"
-  height="100%"
-  xmlns="http://www.w3.org/2000/svg"
-  style={{ display: "block", overflow: "hidden" }}
->
-<text
-  x="54"
-  y="20"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="4.8"
-  fontWeight="500"
-  textAnchor="middle"
-  dominantBaseline="middle"
-  transform="rotate(180 54 20)"
->
-  NAKEDANDFAMOUSDENIM.COM
-</text>
+      <svg
+        viewBox="0 0 108 288"
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ display: "block", overflow: "hidden" }}
+      >
 
-<text
-  x="79"
-  y="146"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="8.4"
-  fontWeight="700"
-  textAnchor="middle"
-  dominantBaseline="middle"
-  transform="rotate(180 79 146)"
->
-  {fitName}
-</text>
+  <text
+    x="54"
+    y="36"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="5"
+    fontWeight="500"
+    textAnchor="middle"
+    dominantBaseline="middle"
+    transform="rotate(180 54 36)"
+  >
+    NAKEDANDFAMOUSDENIM.COM
+  </text>
 
-<text
-  x="13"
-  y="146"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="8.4"
-  fontWeight="700"
-  textAnchor="middle"
-  dominantBaseline="middle"
-  transform="rotate(180 13 146)"
->
-  {size}
-</text>
 
-<text
-  x="54"
-  y="158"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="5.2"
-  fontWeight="500"
-  textAnchor="middle"
-  dominantBaseline="middle"
->
-  MADE IN / FAIT AU CANADA
-</text>
+  <text
+    x="80"
+    y="152"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize={isLongFit ? "7.5" : "9"}
+    fontWeight="600"
+    textAnchor="middle"
+    dominantBaseline="middle"
+    transform="rotate(180 76 152)"
+  >
+    {fitName}
+  </text>
 
-<image
-  href={logoUrl}
-  x="23"
-  y="168"
-  width="64"
-  height="36"
-  preserveAspectRatio="xMidYMid meet"
-/>
+  <text
+    x="16"
+    y="152"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="9"
+    fontWeight="600"
+    textAnchor="middle"
+    dominantBaseline="middle"
+    transform="rotate(180 16 152)"
+  >
+    {size}
+  </text>
 
-<line
-  x1="3"
-  y1="214"
-  x2="86"
-  y2="214"
-  stroke="#000"
-  strokeWidth="0.45"
-/>
+  <text
+    x="54"
+    y="172"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="6"
+    fontWeight="500"
+    textAnchor="middle"
+    dominantBaseline="middle"
+  >
+    MADE IN / FAIT AU CANADA
+  </text>
+  <image
+    href={logoUrl}
+    x="23"
+    y="184"
+    width="64"
+    height="36"
+    preserveAspectRatio="xMidYMid meet"
+  />
 
-<text
-  x="17"
-  y="225"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="7.8"
-  fontWeight="700"
-  textAnchor="start"
-  dominantBaseline="middle"
->
-  {fitName}
-</text>
+  <line
+    x2="90"x1="14"
+    y1="232"
+    x2="90"
+    y2="232"
+    stroke="#000"
+    strokeWidth="0.45"
+  />
 
-<rect
-  x="86"
-  y="214"
-  width="19"
-  height="18"
-  fill="none"
-  stroke="#000"
-  strokeWidth="0.45"
-/>
+  <text
+    x="14"
+    y="241.5"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="8"
+    fontWeight="500"
+    textAnchor="start"
+    dominantBaseline="middle"
+  >
+    {fitName}
+  </text>
 
-<text
-  x="95.5"
-  y="223"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="7.8"
-  fontWeight="700"
-  textAnchor="middle"
-  dominantBaseline="middle"
->
-  {size}
-</text>
+  <rect
+    x="86"
+    y="232"
+    width="19"
+    height="19"
+    fill="none"
+    stroke="#000"
+    strokeWidth="0.45"
+  />
 
-<text
-  x="6"
-  y="247"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="5.8"
-  fontWeight="500"
-  textAnchor="start"
->
-  {descLines.map((line, i) => (
-    <tspan key={i} x="6" dy={i === 0 ? 0 : "6.8"}>
-      {line}
-    </tspan>
-  ))}
-</text>
-      </svg>
+  <text
+    x="95.5"
+    y="241.5"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="8"
+    fontWeight="600"
+    textAnchor="middle"
+    dominantBaseline="middle"
+  >
+    {size}
+  </text>
+
+  <text
+    x="14"
+    y="268"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="7"
+    fontWeight="500"
+    textAnchor="start"
+  >
+    {descLines.map((line, i) => (
+      <tspan key={i} x="14" dy={i === 0 ? 0 : "8.2"}>
+        {line}
+      </tspan>
+    ))}
+  </text>
+</svg>
+
     </div>
   );
 }
@@ -584,7 +594,7 @@ top: "24px",
 </div>
 
 <div style={{ display: "grid", gap: "16px" }}>
-  <div>
+<div>
     <label
       style={{
         display: "block",
@@ -597,8 +607,7 @@ top: "24px",
     </label>
 
     <div style={{ position: "relative", marginBottom: fitMenuOpen ? "220px" : "0" }}>
-        Type to search fit...
-Type to search fit...
+Search
 <input
         value={fitQuery}
         onChange={(e) => {
@@ -911,10 +920,22 @@ style={{
             gap: "12px",
           }}
         >
-          <div>
-            <div style={{ fontSize: "14px", fontWeight: 600 }}>{job.fitName}</div>
-            <div style={{ fontSize: "12px", color: "#666" }}>{jobTotal} labels</div>
-          </div>
+<div>
+  <div style={{ fontSize: "14px", fontWeight: 600 }}>
+    {job.fitName}
+  </div>
+
+  <div style={{ fontSize: "12px", color: "#666" }}>
+    {jobTotal} labels
+  </div>
+
+  <div style={{ fontSize: "12px", color: "#999", marginTop: "4px" }}>
+    {SIZES
+      .filter((size) => job.counts[size] > 0)
+      .map((size) => `${size}×${job.counts[size]}`)
+      .join(" • ")}
+  </div>
+</div>
 
           <button
             type="button"
