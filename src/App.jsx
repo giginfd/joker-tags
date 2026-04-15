@@ -229,125 +229,122 @@ function Label({ fitName, desc, size }) {
         background: "white",
       }}
     >
-      <svg
-        viewBox="0 0 108 288"
-        width="100%"
-        height="100%"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ display: "block", overflow: "hidden" }}
-      >
 
-<text
-  x="95.5"
-  y="213"
-  fill="#000"
-  fontFamily="Inter, Arial, sans-serif"
-  fontSize="7.2"
-  fontWeight="600"
-  textAnchor="middle"
-  dominantBaseline="middle"
+<svg
+  viewBox="0 0 108 288"
+  width="100%"
+  height="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  style={{ display: "block", overflow: "hidden" }}
 >
-  {size}
-</text>
-<text
-          x="54"
-          y="6"
-          fill="#000"
-          fontFamily="Inter, Arial, sans-serif"
-          fontSize="4.2"
-          fontWeight="500"
-          textAnchor="middle"
-          dominantBaseline="middle"
-          transform="rotate(180 54 6)"
-        >
-          NAKEDANDFAMOUSDENIM.COM
-        </text>
+  <text
+    x="54"
+    y="6"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="4.2"
+    fontWeight="500"
+    textAnchor="middle"
+    dominantBaseline="middle"
+    transform="rotate(180 54 6)"
+  >
+    NAKEDANDFAMOUSDENIM.COM
+  </text>
 
-        <text
-          x="79"
-          y="126"
-          fill="#000"
-          fontFamily="Inter, Arial, sans-serif"
-          fontSize="7.2"
-          fontWeight="800"
-          textAnchor="middle"
-          dominantBaseline="middle"
-          transform="rotate(180 79 126)"
-        >
-          {fitName}
-        </text>
+  <text
+    x="79"
+    y="126"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="7.2"
+    fontWeight="800"
+    textAnchor="middle"
+    dominantBaseline="middle"
+    transform="rotate(180 79 126)"
+  >
+    {fitName}
+  </text>
 
-<text
-  x="13"
-  y="126"
-  fill="#000"
-  fontFamily="Inter, Arial, sans-serif"
-  fontSize="7.2"
-  fontWeight="800"
-  textAnchor="middle"
-  dominantBaseline="middle"
-  transform="rotate(180 13 126)"
->
-  {size}
-</text>
+  <text
+    x="13"
+    y="126"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="7.2"
+    fontWeight="800"
+    textAnchor="middle"
+    dominantBaseline="middle"
+    transform="rotate(180 13 126)"
+  >
+    {size}
+  </text>
 
-<text
-  x="54"
-  y="144"
-  fill="#000"
-  fontFamily="Inter, Arial, sans-serif"
-  fontSize="4.8"
-  fontWeight="500"
-  textAnchor="middle"
-  dominantBaseline="middle"
->
-  MADE IN / FAIT AU CANADA
-</text>
+  <text
+    x="54"
+    y="144"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="4.8"
+    fontWeight="500"
+    textAnchor="middle"
+    dominantBaseline="middle"
+  >
+    MADE IN / FAIT AU CANADA
+  </text>
 
-<image
-  href={logoUrl}
-  x="25"
-  y="160"
-  width="62"
-  height="34"
-  preserveAspectRatio="xMidYMid meet"
-/>
+  <image
+    href={logoUrl}
+    x="25"
+    y="160"
+    width="62"
+    height="34"
+    preserveAspectRatio="xMidYMid meet"
+  />
 
-        <text
-          x="17"
-          y="214"
-          fill="#000"
-          fontFamily="Inter, Arial, sans-serif"
-          fontSize="6.8"
-          fontWeight="800"
-          textAnchor="start"
-          dominantBaseline="middle"
-        >
-          {fitName}
-        </text>
+  <line
+    x1="3"
+    y1="204"
+    x2="86"
+    y2="204"
+    stroke="#000"
+    strokeWidth="0.3"
+  />
 
-        <rect
-          x="86"
-          y="204"
-          width="19"
-          height="18"
-          fill="none"
-          stroke="#000"
-          strokeWidth="0.3"
-        />
+  <text
+    x="17"
+    y="214"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="6.8"
+    fontWeight="800"
+    textAnchor="start"
+    dominantBaseline="middle"
+  >
+    {fitName}
+  </text>
 
-<text
-  x="95.5"
-  y="213"
-  fill="#000"
-  fontFamily="Inter, Arial, sans-serif"
-  fontSize="7.2"
-  fontWeight="600"
-  textAnchor="middle"
-  dominantBaseline="middle"
->
-  {size}
-</text>
+  <rect
+    x="86"
+    y="204"
+    width="19"
+    height="18"
+    fill="none"
+    stroke="#000"
+    strokeWidth="0.3"
+  />
+
+  <text
+    x="95.5"
+    y="213"
+    fill="#000"
+    fontFamily="Arial, Helvetica, sans-serif"
+    fontSize="7.2"
+    fontWeight="600"
+    textAnchor="middle"
+    dominantBaseline="middle"
+  >
+    {size}
+  </text>
         <text
           x="6"
           y="236"
@@ -553,14 +550,14 @@ return (
       minHeight: "100vh",
       background: "#f5f5f5",
       color: "#171717",
-      padding: "24px",
+      padding: "12px",
       fontFamily: "Inter, Arial, Helvetica, sans-serif",
     }}
   >
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "340px 1fr",
+gridTemplateColumns: window.innerWidth < 1400 ? "1fr" : "340px 1fr",
         gap: "24px",
         width: "100%",
       }}
@@ -572,8 +569,8 @@ return (
           border: "1px solid #e5e5e5",
           padding: "20px",
           height: "fit-content",
-          position: "sticky",
-          top: "24px",
+position: window.innerWidth < 1400 ? "static" : "sticky",
+top: "24px",
         }}
       >
 
@@ -705,8 +702,7 @@ style={{
     background: "#fff",
   }}
 />
-        x="10.5"
-  y="126"<textarea
+<textarea
         value={newFitDesc}
         onChange={(e) => setNewFitDesc(e.target.value)}
         placeholder={"Description\nEnglish line\nFrench line"}
