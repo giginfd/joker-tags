@@ -262,28 +262,28 @@ function Label({ fitName, desc, size }) {
 
   <text
     x="80"
-    y="152"
+    y="140"
     fill="#000"
     fontFamily="Arial, Helvetica, sans-serif"
     fontSize={isLongFit ? "7.5" : "9"}
     fontWeight="600"
     textAnchor="middle"
     dominantBaseline="middle"
-    transform="rotate(180 76 152)"
+    transform="rotate(180 76 140)"
   >
     {fitName}
   </text>
 
   <text
     x="16"
-    y="152"
+    y="140"
     fill="#000"
     fontFamily="Arial, Helvetica, sans-serif"
     fontSize="9"
     fontWeight="600"
     textAnchor="middle"
     dominantBaseline="middle"
-    transform="rotate(180 16 152)"
+    transform="rotate(180 16 140)"
   >
     {size}
   </text>
