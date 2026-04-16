@@ -302,19 +302,20 @@ return (
         height="100%"
         xmlns="http://www.w3.org/2000/svg"
         style={{ display: "block", overflow: "hidden" }}
-      >
-        <text
-          x="54"
-          y="36"
-          fill="#000"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="5"
-          textAnchor="middle"
-          dominantBaseline="middle"
-          transform="rotate(180 54 36)"
-        >
-          NAKEDANDFAMOUSDENIM.COM
-        </text>
+>
+
+<text
+  x="54"
+  y="36"
+  fill="#000"
+  fontFamily="Arial, Helvetica, sans-serif"
+  fontSize="5"
+  textAnchor="middle"
+  dominantBaseline="middle"
+  transform="rotate(180 54 36)"
+>
+  NAKEDANDFAMOUSDENIM.COM
+</text>
 
         <text
           x="80"
@@ -415,12 +416,12 @@ textAnchor="middle"
           y="268"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="7"
+          fontSize="8"
  fontWeight="500"          
 textAnchor="start"
         >
           {descLines.map((line, i) => (
-            <tspan key={i} x="14" dy={i === 0 ? 0 : "8.2"}>
+            <tspan key={i} x="14" dy={i === 0 ? 0 : "9.0"}>
               {line}
             </tspan>
           ))}
