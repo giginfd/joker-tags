@@ -1,98 +1,69 @@
 import { useEffect, useMemo, useState } from "react";
 import logoUrl from "./assets/logo.svg";
+
 const PAGE = {
   widthIn: 11,
   heightIn: 8.5,
-marginLeftIn: 0.25,
-marginTopIn: 0.25,
+  marginLeftIn: 0.25,
+  marginTopIn: 0.25,
   cols: 7,
   rows: 2,
   labelWidthIn: 1.5,
   labelHeightIn: 4.0,
 };
 
-const SIZES = Array.from({ length: 22 }, (_, i) => 23 + i);
+const NUMERIC_SIZES = Array.from({ length: 22 }, (_, i) => 23 + i);
+const LETTER_SIZES = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
 
 const FITS = {
   bestie: {
     key: "bestie",
     name: "BESTIE",
     desc: "Mid-rise, barrel leg.\nMi-taille, jambe baril.",
-  },
-  pleated_trouser: {
-    key: "pleated_trouser",
-    name: "PLEATED TROUSER",
-    desc: "Mid-rise, front pleats.\nMi-taille, plis à l’avant.",
-  },
-  strong_guy: {
-    key: "strong_guy",
-    name: "STRONG GUY",
-    desc: "Relaxed straight leg.\nCoupe droite décontractée.",
+    sizes: NUMERIC_SIZES,
   },
   chore_coat: {
     key: "chore_coat",
     name: "CHORE COAT",
     desc: "Classic workwear coat.\nVeste de travail classique.",
+    sizes: LETTER_SIZES,
   },
   denim_jacket: {
     key: "denim_jacket",
     name: "DENIM JACKET",
     desc: "Classic fit.\nCoupe classique.",
+    sizes: LETTER_SIZES,
   },
   groovy_guy: {
     key: "groovy_guy",
     name: "GROOVY GUY",
-    desc: "Bootcut, semi-flared leg.\nJambe semi-évasé.",
-  },
-  maudie: {
-    key: "maudie",
-    name: "MAUDIE",
-    desc: "Mid-rise, wide-leg crop.\nMi-taille, jambe large, longueur raccourcie.",
+    desc: "Bootcut, semi-flared leg.\nJambe semi-évasée.",
+    sizes: NUMERIC_SIZES,
   },
   wide_wild_west: {
     key: "wide_wild_west",
     name: "WIDE WILD WEST",
     desc: "Mid-rise, wide leg.\nMi-taille, jambe large.",
+    sizes: NUMERIC_SIZES,
   },
-  straight_chino: {
-    key: "straight_chino",
-    name: "STRAIGHT CHINO",
-    desc: "Straight leg chino.\nChino coupe droite.",
+  true_guy: {
+    key: "true_guy",
+    name: "TRUE GUY",
+    desc: "Straight leg, regular rise.\nCoupe droite, taille rég.",
+    sizes: NUMERIC_SIZES,
   },
-  work_pant: {
-    key: "work_pant",
-    name: "WORK PANT",
-    desc: "High rise, straight leg.\nTaille haute, jambe droite.",
+  super_guy: {
+    key: "super_guy",
+    name: "SUPER GUY",
+    desc: "Regular rise, skinny leg.\nTaille rég., jambe étroite.",
+    sizes: NUMERIC_SIZES,
   },
-  true_girl: {
-    key: "true_girl",
-    name: "TRUE GIRL",
-    desc: "High rise, straight leg.\nTaille haute, jambe droite.",
+  easy_guy: {
+    key: "easy_guy",
+    name: "EASY GUY",
+    desc: "Relaxed fit, tapered leg.\nCoupe relax, jambe fuselée.",
+    sizes: NUMERIC_SIZES,
   },
-  
-  weird_guy: {
-    key: "weird_guy",
-    name: "WEIRD GUY",
-    desc: "Regular tapered fit.\nCoupe fuselée régulière.",
-  },
-true_guy: {
-  key: "true_guy",
-  name: "TRUE GUY",
-  desc: "Straight leg, regular rise.\nCoupe droite, taille rég.",
-},
-
-super_guy: {
-  key: "super_guy",
-  name: "SUPER GUY",
-  desc: "Regular rise, skinny leg.\nTaille rég., jambe étroite.",
-},
-
-
-easy_guy: {
-  key: "easy_guy",
-  name: "EASY GUY",
-  desc: "Relaxed fit, tapered leg.\nCoupe relax, jambe fuselée.",
-},
 };
 
 const LABELS_PER_PAGE = PAGE.cols * PAGE.rows;
@@ -127,10 +98,38 @@ function labelSlotStyle(index) {
   };
 }
 
+function wrapText(text, maxCharsPerLine = 28) {
+  const paragraphs = text.split("\n");
+  const lines = [];
+
+  for (const paragraph of paragraphs) {
+    const words = paragraph.split(" ");
+    let current = "";
+
+    for (const word of words) {
+      const test = current ? `${current} ${word}` : word;
+      if (test.length <= maxCharsPerLine) {
+        current = test;
+      } else {
+        if (current) lines.push(current);
+        current = word;
+      }
+    }
+
+    if (current) lines.push(current);
+    lines.push("");
+  }
+
+  if (lines[lines.length - 1] === "") {
+    lines.pop();
+  }
+
+  return lines;
+}
+
 function printDocument() {
   window.print();
 }
-
 
 function ensurePrintStyles() {
   const existing = document.getElementById("print-style");
@@ -184,8 +183,9 @@ function ensurePrintStyles() {
         page-break-after: always !important;
       }
 
-      .sheet-label {
-        display: none !important;
+      #print-root > .page-break:last-child {
+        break-after: auto !important;
+        page-break-after: auto !important;
       }
 
       #print-root > .page-break > div:last-child {
@@ -199,32 +199,6 @@ function ensurePrintStyles() {
   document.head.appendChild(style);
 }
 
-function wrapText(text, maxCharsPerLine = 32) {
-  const paragraphs = text.split("\n");   // 👈 split first
-  const lines = [];
-
-  for (const paragraph of paragraphs) {
-    const words = paragraph.split(" ");
-    let current = "";
-
-    for (const word of words) {
-      const test = current ? `${current} ${word}` : word;
-      if (test.length <= maxCharsPerLine) {
-        current = test;
-      } else {
-        if (current) lines.push(current);
-        current = word;
-      }
-    }
-
-    if (current) lines.push(current);
-
-    // add a small break between lines
-    lines.push(""); // blank line (optional spacing)
-  }
-
-  return lines;
-}
 function Label({ fitName, desc, size }) {
   const descLines = wrapText(desc, 30);
   const isLongFit = fitName.length > 12;
@@ -244,133 +218,124 @@ function Label({ fitName, desc, size }) {
         xmlns="http://www.w3.org/2000/svg"
         style={{ display: "block", overflow: "hidden" }}
       >
+        <text
+          x="54"
+          y="36"
+          fill="#000"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="5"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          transform="rotate(180 54 36)"
+        >
+          NAKEDANDFAMOUSDENIM.COM
+        </text>
 
-  <text
-    x="54"
-    y="36"
-    fill="#000"
-    fontFamily="Arial, Helvetica, sans-serif"
-    fontSize="5"
-    fontWeight="500"
-    textAnchor="middle"
-    dominantBaseline="middle"
-    transform="rotate(180 54 36)"
-  >
-    NAKEDANDFAMOUSDENIM.COM
-  </text>
+        <text
+          x="80"
+          y="130"
+          fill="#000"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize={isLongFit ? "7.5" : "9"}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          transform="rotate(180 76 130)"
+        >
+          {fitName}
+        </text>
 
+        <text
+          x="16"
+          y="130"
+          fill="#000"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="9"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          transform="rotate(180 16 130)"
+        >
+          {size}
+        </text>
 
-  <text
-    x="80"
-    y="140"
-    fill="#000"
-    fontFamily="Arial, Helvetica, sans-serif"
-    fontSize={isLongFit ? "7.5" : "9"}
-    fontWeight="600"
-    textAnchor="middle"
-    dominantBaseline="middle"
-    transform="rotate(180 76 140)"
-  >
-    {fitName}
-  </text>
+        <text
+          x="54"
+          y="172"
+          fill="#000"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="6"
+          textAnchor="middle"
+          dominantBaseline="middle"
+        >
+          MADE IN / FAIT AU CANADA
+        </text>
 
-  <text
-    x="16"
-    y="140"
-    fill="#000"
-    fontFamily="Arial, Helvetica, sans-serif"
-    fontSize="9"
-    fontWeight="600"
-    textAnchor="middle"
-    dominantBaseline="middle"
-    transform="rotate(180 16 140)"
-  >
-    {size}
-  </text>
+        <image
+          href={logoUrl}
+          x="23"
+          y="184"
+          width="64"
+          height="36"
+          preserveAspectRatio="xMidYMid meet"
+        />
 
-  <text
-    x="54"
-    y="172"
-    fill="#000"
-    fontFamily="Arial, Helvetica, sans-serif"
-    fontSize="6"
-    fontWeight="500"
-    textAnchor="middle"
-    dominantBaseline="middle"
-  >
-    MADE IN / FAIT AU CANADA
-  </text>
-  <image
-    href={logoUrl}
-    x="23"
-    y="184"
-    width="64"
-    height="36"
-    preserveAspectRatio="xMidYMid meet"
-  />
+        <line
+          x1="14"
+          y1="232"
+          x2="90"
+          y2="232"
+          stroke="#000"
+          strokeWidth="0.45"
+        />
 
-  <line
-    x2="90"x1="14"
-    y1="232"
-    x2="90"
-    y2="232"
-    stroke="#000"
-    strokeWidth="0.45"
-  />
+        <text
+          x="14"
+          y="241.5"
+          fill="#000"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="8"
+          textAnchor="start"
+          dominantBaseline="middle"
+        >
+          {fitName}
+        </text>
 
-  <text
-    x="14"
-    y="241.5"
-    fill="#000"
-    fontFamily="Arial, Helvetica, sans-serif"
-    fontSize="8"
-    fontWeight="500"
-    textAnchor="start"
-    dominantBaseline="middle"
-  >
-    {fitName}
-  </text>
+        <rect
+          x="86"
+          y="232"
+          width="19"
+          height="19"
+          fill="none"
+          stroke="#000"
+          strokeWidth="0.45"
+        />
 
-  <rect
-    x="86"
-    y="232"
-    width="19"
-    height="19"
-    fill="none"
-    stroke="#000"
-    strokeWidth="0.45"
-  />
+        <text
+          x="95.5"
+          y="241.5"
+          fill="#000"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="8"
+          textAnchor="middle"
+          dominantBaseline="middle"
+        >
+          {size}
+        </text>
 
-  <text
-    x="95.5"
-    y="241.5"
-    fill="#000"
-    fontFamily="Arial, Helvetica, sans-serif"
-    fontSize="8"
-    fontWeight="600"
-    textAnchor="middle"
-    dominantBaseline="middle"
-  >
-    {size}
-  </text>
-
-  <text
-    x="14"
-    y="268"
-    fill="#000"
-    fontFamily="Arial, Helvetica, sans-serif"
-    fontSize="7"
-    fontWeight="500"
-    textAnchor="start"
-  >
-    {descLines.map((line, i) => (
-      <tspan key={i} x="14" dy={i === 0 ? 0 : "8.2"}>
-        {line}
-      </tspan>
-    ))}
-  </text>
-</svg>
-
+        <text
+          x="14"
+          y="268"
+          fill="#000"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="7"
+          textAnchor="start"
+        >
+          {descLines.map((line, i) => (
+            <tspan key={i} x="14" dy={i === 0 ? 0 : "8.2"}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </svg>
     </div>
   );
 }
@@ -394,57 +359,89 @@ function PagePreview({ labels }) {
 
         return (
           <div key={i} style={labelSlotStyle(i)}>
-            <Label
-              fitName={label.fitName}
-              desc={label.desc}
-              size={label.size}
-            />
+            <Label fitName={label.fitName} desc={label.desc} size={label.size} />
           </div>
         );
       })}
     </div>
   );
 }
+
 export default function App() {
-  ensurePrintStyles();
-
   const [fitKey, setFitKey] = useState("bestie");
-  const [counts, setCounts] = useState(() =>
-    Object.fromEntries(SIZES.map((size) => [size, 0]))
-  );
-
-const [fitQuery, setFitQuery] = useState("");
+  const [fitQuery, setFitQuery] = useState("");
   const [fitMenuOpen, setFitMenuOpen] = useState(false);
   const [batchJobs, setBatchJobs] = useState([]);
+  const [showNewFitForm, setShowNewFitForm] = useState(false);
+  const [newFitName, setNewFitName] = useState("");
+  const [newFitDesc, setNewFitDesc] = useState("");
+  const [customFits, setCustomFits] = useState({});
+  const [isWideScreen, setIsWideScreen] = useState(() => window.innerWidth >= 1400);
 
-const [customFits, setCustomFits] = useState({});
-const [showNewFitForm, setShowNewFitForm] = useState(false);
-const [newFitName, setNewFitName] = useState("");
-const [newFitDesc, setNewFitDesc] = useState("");
+  useEffect(() => {
+    ensurePrintStyles();
+  }, []);
 
-const allFits = useMemo(() => {
-  return { ...FITS, ...customFits };
-}, [customFits]);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsWideScreen(window.innerWidth >= 1400);
+    };
 
-const fitList = Object.values(allFits);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-const filteredFits = fitList.filter((f) =>
-  f.name.toLowerCase().includes(fitQuery.toLowerCase())
-);
+  useEffect(() => {
+    const saved = localStorage.getItem(CUSTOM_FITS_STORAGE_KEY);
+    if (!saved) return;
 
-const fit = allFits[fitKey];
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed && typeof parsed === "object") {
+        setCustomFits(parsed);
+      }
+    } catch (error) {
+      console.error("Failed to load custom fits", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(CUSTOM_FITS_STORAGE_KEY, JSON.stringify(customFits));
+  }, [customFits]);
+
+  const allFits = useMemo(() => {
+    return { ...FITS, ...customFits };
+  }, [customFits]);
+
+  const fitList = Object.values(allFits);
+
+  const filteredFits = fitList.filter((f) =>
+    f.name.toLowerCase().includes(fitQuery.toLowerCase())
+  );
+
+  const fit = allFits[fitKey] || FITS.bestie;
+  const activeSizes = fit.sizes || NUMERIC_SIZES;
+
+  const [counts, setCounts] = useState(() =>
+    Object.fromEntries((FITS.bestie.sizes || NUMERIC_SIZES).map((size) => [size, 0]))
+  );
+
+  useEffect(() => {
+    setCounts(Object.fromEntries(activeSizes.map((size) => [size, 0])));
+  }, [activeSizes]);
+
   function updateCount(size, value) {
     const numeric = Math.max(0, Number.parseInt(value || "0", 10) || 0);
     setCounts((prev) => ({ ...prev, [size]: numeric }));
   }
 
   function resetCounts() {
-    setCounts(Object.fromEntries(SIZES.map((size) => [size, 0])));
+    setCounts(Object.fromEntries(activeSizes.map((size) => [size, 0])));
   }
 
   function buildJobQueue(job) {
     const queue = [];
-    for (const size of SIZES) {
+    for (const size of job.sizes || []) {
       const count = job.counts[size] || 0;
       for (let i = 0; i < count; i += 1) {
         queue.push({
@@ -457,21 +454,8 @@ const fit = allFits[fitKey];
     return queue;
   }
 
-function handleSizeInputKeyDown(e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-
-    addCurrentFitToBatch();
-
-    setFitQuery("");
-    setFitMenuOpen(false);
-
-    const input = document.getElementById("fit-search");
-    if (input) input.focus();
-  }
-}
   function addCurrentFitToBatch() {
-    const hasAnyQuantity = SIZES.some((size) => (counts[size] || 0) > 0);
+    const hasAnyQuantity = activeSizes.some((size) => (counts[size] || 0) > 0);
     if (!hasAnyQuantity) return;
 
     const nextJob = {
@@ -480,67 +464,69 @@ function handleSizeInputKeyDown(e) {
       fitName: fit.name,
       desc: fit.desc,
       counts: { ...counts },
+      sizes: [...activeSizes],
     };
 
     setBatchJobs((prev) => [...prev, nextJob]);
     resetCounts();
   }
-useEffect(() => {
-  const saved = localStorage.getItem(CUSTOM_FITS_STORAGE_KEY);
-  if (!saved) return;
 
-  try {
-    const parsed = JSON.parse(saved);
-    if (parsed && typeof parsed === "object") {
-      setCustomFits(parsed);
+  function handleSizeInputKeyDown(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addCurrentFitToBatch();
+      setFitQuery("");
+      setFitMenuOpen(false);
+
+      const input = document.getElementById("fit-search");
+      if (input) input.focus();
     }
-  } catch (error) {
-    console.error("Failed to load custom fits", error);
   }
-}, []);
 
-useEffect(() => {
-  localStorage.setItem(CUSTOM_FITS_STORAGE_KEY, JSON.stringify(customFits));
-}, [customFits]);
+  function resetAll() {
+    setFitKey("bestie");
+    setFitQuery("");
+    setFitMenuOpen(false);
+    setCounts(
+      Object.fromEntries((FITS.bestie.sizes || NUMERIC_SIZES).map((size) => [size, 0]))
+    );
+    setBatchJobs([]);
+  }
 
-function resetAll() {
-  setFitKey("bestie");
-  setFitQuery(FITS["bestie"].name);
-  setFitMenuOpen(false);
-  setCounts(Object.fromEntries(SIZES.map((size) => [size, 0])));
-  setBatchJobs([]);
-}
-function saveNewFit() {
-  const trimmedName = newFitName.trim();
-  const trimmedDesc = newFitDesc.trim();
+  function saveNewFit() {
+    const trimmedName = newFitName.trim();
+    const trimmedDesc = newFitDesc.trim();
 
-  if (!trimmedName || !trimmedDesc) return;
+    if (!trimmedName || !trimmedDesc) return;
 
-  const key = slugifyFitName(trimmedName);
-  if (!key) return;
+    const key = slugifyFitName(trimmedName);
+    if (!key) return;
 
-  const nextFit = {
-    key,
-    name: trimmedName.toUpperCase(),
-    desc: trimmedDesc,
-  };
+    const nextFit = {
+      key,
+      name: trimmedName.toUpperCase(),
+      desc: trimmedDesc,
+      sizes: LETTER_SIZES,
+    };
 
-  setCustomFits((prev) => ({
-    ...prev,
-    [key]: nextFit,
-  }));
+    setCustomFits((prev) => ({
+      ...prev,
+      [key]: nextFit,
+    }));
 
-  setFitKey(key);
-  setFitQuery(trimmedName.toUpperCase());
-  setShowNewFitForm(false);
-  setNewFitName("");
-  setNewFitDesc("");
-}
-function cancelNewFit() {
-  setShowNewFitForm(false);
-  setNewFitName("");
-  setNewFitDesc("");
-}
+    setFitKey(key);
+    setFitQuery(trimmedName.toUpperCase());
+    setShowNewFitForm(false);
+    setNewFitName("");
+    setNewFitDesc("");
+  }
+
+  function cancelNewFit() {
+    setShowNewFitForm(false);
+    setNewFitName("");
+    setNewFitDesc("");
+  }
+
   function removeBatchJob(jobId) {
     setBatchJobs((prev) => prev.filter((job) => job.id !== jobId));
   }
@@ -553,501 +539,502 @@ function cancelNewFit() {
   const totalLabels = batchQueue.length;
   const totalSheets = Math.ceil(totalLabels / LABELS_PER_PAGE);
 
-
-return (
-  <div
-    style={{
-      minHeight: "100vh",
-      background: "#f5f5f5",
-      color: "#171717",
-      padding: "12px",
-      fontFamily: "Inter, Arial, Helvetica, sans-serif",
-    }}
-  >
+  return (
     <div
       style={{
-        display: "grid",
-gridTemplateColumns: window.innerWidth < 1400 ? "1fr" : "340px 1fr",
-        gap: "24px",
-        width: "100%",
+        minHeight: "100vh",
+        background: "#f5f5f5",
+        color: "#171717",
+        padding: "12px",
+        fontFamily: "Arial, Helvetica, sans-serif",
       }}
     >
-      <aside
+      <div
         style={{
-          background: "#fff",
-          borderRadius: "16px",
-          border: "1px solid #e5e5e5",
-          padding: "20px",
-          height: "fit-content",
-position: window.innerWidth < 1400 ? "static" : "sticky",
-top: "24px",
+          display: "grid",
+          gridTemplateColumns: isWideScreen ? "340px 1fr" : "1fr",
+          gap: "24px",
+          width: "100%",
         }}
       >
-
-<div style={{ marginBottom: "20px" }}>
-  <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 600 }}>
-    Joker tags generator
-  </h1>
-  <p style={{ margin: "6px 0 0", fontSize: "14px", color: "#666" }}>
-    Single-fit job builder for 14-up landscape sheets.
-  </p>
-</div>
-
-<div style={{ display: "grid", gap: "16px" }}>
-<div>
-    <label
-      style={{
-        display: "block",
-        fontSize: "14px",
-        fontWeight: 600,
-        marginBottom: "6px",
-      }}
-    >
-      Fit
-    </label>
-
-    <div style={{ position: "relative", marginBottom: fitMenuOpen ? "220px" : "0" }}>
-Search
-<input
-        value={fitQuery}
-        onChange={(e) => {
-          setFitQuery(e.target.value);
-          setFitMenuOpen(true);
-        }}
-        onFocus={() => setFitMenuOpen(true)}
-        placeholder="Type to search fit..."
-        style={{
-          width: "80%",
-          borderRadius: "12px",
-          border: "1px solid #d4d4d4",
-          padding: "10px 12px",
-          background: "#fff",
-        }}
-      />
-
-      {fitMenuOpen && filteredFits.length > 0 && (
-        <div
+        <aside
           style={{
-            position: "absolute",
-            top: "42px",
-            left: 0,
-            right: 0,
             background: "#fff",
-            border: "1px solid #d4d4d4",
-            borderRadius: "12px",
-            maxHeight: "200px",
-            overflow: "auto",
-            zIndex: 10,
+            borderRadius: "16px",
+            border: "1px solid #e5e5e5",
+            padding: "20px",
+            height: "fit-content",
+            position: isWideScreen ? "sticky" : "static",
+            top: "24px",
           }}
         >
-          {filteredFits.map((item) => (
-            <div
-              key={item.key}
-              onMouseDown={() => {
-                setFitKey(item.key);
-                setFitQuery(item.name);
-                setFitMenuOpen(false);
-              }}
-style={{
-  padding: "8px 12px",
-  cursor: "pointer",
-  borderBottom: "1px solid #eee",
-  fontSize: "14px",
-}}
-            >
-              {item.name}
+          <div style={{ marginBottom: "20px" }}>
+            <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 600 }}>
+              Joker tags generator
+            </h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "#666" }}>
+              Single-fit job builder for 14-up landscape sheets.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gap: "16px" }}>
+            <div>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  marginBottom: "6px",
+                }}
+              >
+                Fit
+              </label>
+
+              <div
+                style={{
+                  position: "relative",
+                  marginBottom: fitMenuOpen ? "220px" : "0",
+                }}
+              >
+                <input
+                  id="fit-search"
+                  value={fitQuery}
+                  onChange={(e) => {
+                    setFitQuery(e.target.value);
+                    setFitMenuOpen(true);
+                  }}
+                  onFocus={() => setFitMenuOpen(true)}
+                  placeholder="Type to search fit..."
+                  style={{
+                    width: "100%",
+                    borderRadius: "12px",
+                    border: "1px solid #d4d4d4",
+                    padding: "10px 12px",
+                    background: "#fff",
+                    boxSizing: "border-box",
+                  }}
+                />
+
+                {fitMenuOpen && filteredFits.length > 0 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "42px",
+                      left: 0,
+                      right: 0,
+                      background: "#fff",
+                      border: "1px solid #d4d4d4",
+                      borderRadius: "12px",
+                      maxHeight: "200px",
+                      overflow: "auto",
+                      zIndex: 10,
+                    }}
+                  >
+                    {filteredFits.map((item) => (
+                      <div
+                        key={item.key}
+                        onMouseDown={() => {
+                          setFitKey(item.key);
+                          setFitQuery(item.name);
+                          setFitMenuOpen(false);
+                        }}
+                        style={{
+                          padding: "8px 12px",
+                          cursor: "pointer",
+                          borderBottom: "1px solid #eee",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {item.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  </div>
 
-<div style={{ display: "grid", gap: "8px" }}>
-  <button
-    type="button"
-    onClick={() => setShowNewFitForm((prev) => !prev)}
-    style={{
-      width: "100%",
-      borderRadius: "12px",
-      background: "#fff",
-      color: "#000",
-      padding: "10px 12px",
-      fontWeight: 500,
-      border: "1px solid #d4d4d4",
-      cursor: "pointer",
-    }}
-  >
-    {showNewFitForm ? "Close new fit" : "New fit"}
-  </button>
+            <div style={{ display: "grid", gap: "8px" }}>
+              <button
+                type="button"
+                onClick={() => setShowNewFitForm((prev) => !prev)}
+                style={{
+                  width: "100%",
+                  borderRadius: "12px",
+                  background: "#fff",
+                  color: "#000",
+                  padding: "10px 12px",
+                  fontWeight: 500,
+                  border: "1px solid #d4d4d4",
+                  cursor: "pointer",
+                }}
+              >
+                {showNewFitForm ? "Close new fit" : "New fit"}
+              </button>
 
-  {showNewFitForm && (
-    <div
-      style={{
-        borderRadius: "12px",
-        border: "1px solid #e5e5e5",
-        padding: "12px",
-        background: "#fafafa",
-        display: "grid",
-        gap: "10px",
-      }}
-    >
-        id="fit-search"
+              {showNewFitForm && (
+                <div
+                  style={{
+                    borderRadius: "12px",
+                    border: "1px solid #e5e5e5",
+                    padding: "12px",
+                    background: "#fafafa",
+                    display: "grid",
+                    gap: "10px",
+                  }}
+                >
+                  <input
+                    value={newFitName}
+                    onChange={(e) => setNewFitName(e.target.value)}
+                    placeholder="Fit name"
+                    style={{
+                      width: "100%",
+                      borderRadius: "10px",
+                      border: "1px solid #d4d4d4",
+                      padding: "10px 12px",
+                      background: "#fff",
+                      boxSizing: "border-box",
+                    }}
+                  />
 
+                  <textarea
+                    value={newFitDesc}
+                    onChange={(e) => setNewFitDesc(e.target.value)}
+                    placeholder={"Description\nEnglish line\nFrench line"}
+                    rows={4}
+                    style={{
+                      width: "100%",
+                      borderRadius: "10px",
+                      border: "1px solid #d4d4d4",
+                      padding: "10px 12px",
+                      background: "#fff",
+                      resize: "vertical",
+                      fontFamily: "Arial, Helvetica, sans-serif",
+                      boxSizing: "border-box",
+                    }}
+                  />
 
-<input
-  id="fit-search"
-  value={fitQuery}
-  onChange={(e) => {
-    setFitQuery(e.target.value);
-    setFitMenuOpen(true);
-  }}
-  onFocus={() => setFitMenuOpen(true)}
-  placeholder="Type to search fit..."
-  style={{
-    width: "100%",
-    borderRadius: "12px",
-    border: "1px solid #d4d4d4",
-    padding: "10px 12px",
-    background: "#fff",
-  }}
-/>
-<textarea
-        value={newFitDesc}
-        onChange={(e) => setNewFitDesc(e.target.value)}
-        placeholder={"Description\nEnglish line\nFrench line"}
-        rows={4}
-        style={{
-          width: "100%",
-          borderRadius: "10px",
-          border: "1px solid #d4d4d4",
-          padding: "10px 12px",
-          background: "#fff",
-          resize: "vertical",
-          fontFamily: "Inter, Arial, Helvetica, sans-serif",
-        }}
-      />
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                      type="button"
+                      onClick={saveNewFit}
+                      style={{
+                        flex: 1,
+                        borderRadius: "10px",
+                        background: "#000",
+                        color: "#fff",
+                        padding: "10px 12px",
+                        fontWeight: 600,
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Save fit
+                    </button>
 
-      <div style={{ display: "flex", gap: "8px" }}>
-        <button
-          type="button"
-          onClick={saveNewFit}
-          style={{
-            flex: 1,
-            borderRadius: "10px",
-            background: "#000",
-            color: "#fff",
-            padding: "10px 12px",
-            fontWeight: 600,
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Save fit
-        </button>
+                    <button
+                      type="button"
+                      onClick={cancelNewFit}
+                      style={{
+                        flex: 1,
+                        borderRadius: "10px",
+                        background: "#fff",
+                        color: "#000",
+                        padding: "10px 12px",
+                        fontWeight: 600,
+                        border: "1px solid #d4d4d4",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
-        <button
-          type="button"
-          onClick={cancelNewFit}
-          style={{
-            flex: 1,
-            borderRadius: "10px",
-            background: "#fff",
-            color: "#000",
-            padding: "10px 12px",
-            fontWeight: 600,
-            border: "1px solid #d4d4d4",
-            cursor: "pointer",
-          }}
-        >
-          Cancel
-        </button>
+            <div
+              style={{
+                borderRadius: "12px",
+                border: "1px solid #e5e5e5",
+                padding: "12px",
+                background: "#fafafa",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "11px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.12em",
+                  color: "#737373",
+                  marginBottom: "8px",
+                }}
+              >
+                Fit description
+              </div>
+              <div style={{ fontSize: "14px", fontWeight: 600, whiteSpace: "pre-line" }}>
+                {fit.desc}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginTop: "20px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "8px",
+              }}
+            >
+              <h2 style={{ margin: 0, fontSize: "14px", fontWeight: 700 }}>
+                Quantities by size
+              </h2>
+              <button
+                type="button"
+                onClick={resetCounts}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  color: "#666",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                }}
+              >
+                Reset
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "8px",
+                maxHeight: "340px",
+                overflowY: "auto",
+                paddingRight: "4px",
+              }}
+            >
+              {activeSizes.map((size) => (
+                <label
+                  key={size}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "12px",
+                    borderRadius: "12px",
+                    border: "1px solid #e5e5e5",
+                    padding: "10px 12px",
+                    background: "#fff",
+                  }}
+                >
+                  <span style={{ fontSize: "14px", fontWeight: 600 }}>{size}</span>
+
+                  <input
+                    type="number"
+                    min={0}
+                    step={1}
+                    value={counts[size] || 0}
+                    onChange={(e) => updateCount(size, e.target.value)}
+                    onKeyDown={handleSizeInputKeyDown}
+                    style={{
+                      width: "70px",
+                      borderRadius: "8px",
+                      border: "1px solid #d4d4d4",
+                      padding: "6px 8px",
+                      textAlign: "right",
+                    }}
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: "20px",
+              borderRadius: "12px",
+              border: "1px solid #e5e5e5",
+              padding: "16px",
+              display: "grid",
+              gap: "8px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+              <span>Total labels</span>
+              <strong>{totalLabels}</strong>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+              <span>Total sheets</span>
+              <strong>{totalSheets || 0}</strong>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+              <span>Labels per sheet</span>
+              <strong>{LABELS_PER_PAGE}</strong>
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: "20px",
+              borderRadius: "12px",
+              border: "1px solid #e5e5e5",
+              padding: "16px",
+              display: "grid",
+              gap: "10px",
+            }}
+          >
+            <div style={{ fontSize: "14px", fontWeight: 700 }}>Batch</div>
+
+            {batchJobs.length === 0 ? (
+              <div style={{ fontSize: "14px", color: "#666" }}>No fits added yet.</div>
+            ) : (
+              batchJobs.map((job) => {
+                const jobTotal = (job.sizes || []).reduce(
+                  (sum, size) => sum + (job.counts[size] || 0),
+                  0
+                );
+
+                return (
+                  <div
+                    key={job.id}
+                    style={{
+                      border: "1px solid #e5e5e5",
+                      borderRadius: "10px",
+                      padding: "10px 12px",
+                      background: "#fff",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: "12px",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: "14px", fontWeight: 600 }}>{job.fitName}</div>
+
+                      <div style={{ fontSize: "12px", color: "#666" }}>
+                        {jobTotal} labels
+                      </div>
+
+                      <div style={{ fontSize: "12px", color: "#999", marginTop: "4px" }}>
+                        {(job.sizes || [])
+                          .filter((size) => job.counts[size] > 0)
+                          .map((size) => `${size}×${job.counts[size]}`)
+                          .join(" • ")}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => removeBatchJob(job.id)}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        color: "#666",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          <div style={{ marginTop: "16px", display: "grid", gap: "10px" }}>
+            <button
+              type="button"
+              onClick={resetAll}
+              style={{
+                width: "100%",
+                borderRadius: "12px",
+                background: "#fff",
+                color: "#000",
+                padding: "12px 14px",
+                fontWeight: 600,
+                border: "1px solid #d4d4d4",
+                cursor: "pointer",
+              }}
+            >
+              Reset all
+            </button>
+
+            <button
+              type="button"
+              onClick={addCurrentFitToBatch}
+              style={{
+                width: "100%",
+                borderRadius: "12px",
+                background: "#fff",
+                color: "#000",
+                padding: "14px 16px",
+                fontWeight: 600,
+                border: "1px solid #d4d4d4",
+                cursor: "pointer",
+              }}
+            >
+              Add fit to batch
+            </button>
+
+            <button
+              type="button"
+              onClick={printDocument}
+              style={{
+                width: "100%",
+                borderRadius: "12px",
+                background: "#000",
+                color: "#fff",
+                padding: "14px 16px",
+                fontWeight: 600,
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Print / Save PDF
+            </button>
+          </div>
+        </aside>
+
+        <main style={{ display: "grid", gap: "16px", width: "100%" }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: "16px", fontWeight: 500 }}>Preview</h2>
+          </div>
+
+          <div
+            style={{
+              overflowX: "auto",
+              overflowY: "auto",
+              borderRadius: "16px",
+              border: "1px solid #e5e5e5",
+              background: "#e5e5e5",
+              padding: "16px",
+            }}
+          >
+            <div
+              id="print-root"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "24px",
+                alignItems: "center",
+                minWidth: "max-content",
+              }}
+            >
+              {(pages.length ? pages : [[]]).map((pageSizes, pageIndex) => (
+                <div
+                  key={pageIndex}
+                  className="page-break"
+                  style={{ display: "flex", flexDirection: "column", gap: "0" }}
+                >
+                  <PagePreview labels={pageSizes} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     </div>
-  )}
-</div>
-
-  <div
-    style={{
-      borderRadius: "12px",
-      border: "1px solid #e5e5e5",
-      padding: "12px",
-      background: "#fafafa",
-    }}
-  >
-    <div
-      style={{
-        fontSize: "11px",
-        textTransform: "uppercase",
-        letterSpacing: "0.12em",
-        color: "#737373",
-        marginBottom: "8px",
-      }}
-    >
-      Fit description
-    </div>
-    <div style={{ fontSize: "14px", fontWeight: 600, whiteSpace: "pre-line" }}>
-      {fit.desc}
-    </div>
-  </div>
-</div>
-<div style={{ marginTop: "20px" }}>
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: "8px",
-    }}
-  >
-    <h2 style={{ margin: 0, fontSize: "14px", fontWeight: 700 }}>
-      Quantities by size
-    </h2>
-    <button
-      type="button"
-      onClick={resetCounts}
-      style={{
-        border: "none",
-        background: "transparent",
-        color: "#666",
-        cursor: "pointer",
-        fontSize: "14px",
-      }}
-    >
-      Reset
-    </button>
-  </div>
-
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: "8px",
-      maxHeight: "340px",
-      overflowY: "auto",
-      paddingRight: "4px",
-    }}
-  >
-    {SIZES.map((size) => (
-      <label
-        key={size}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "12px",
-          borderRadius: "12px",
-          border: "1px solid #e5e5e5",
-          padding: "10px 12px",
-          background: "#fff",
-        }}
-      >
-        <span style={{ fontSize: "14px", fontWeight: 600 }}>{size}</span>
-
-<input
-  type="number"
-  min={0}
-  step={1}
-  value={counts[size] || 0}
-  onChange={(e) => updateCount(size, e.target.value)}
-  onKeyDown={handleSizeInputKeyDown}
-  style={{
-    width: "70px",
-    borderRadius: "8px",
-    border: "1px solid #d4d4d4",
-    padding: "6px 8px",
-    textAlign: "right",
-  }}
-/>
-
-      </label>
-    ))}
-  </div>
-</div>
-<div
-  style={{
-    marginTop: "20px",
-    borderRadius: "12px",
-    border: "1px solid #e5e5e5",
-    padding: "16px",
-    display: "grid",
-    gap: "8px",
-  }}
->
-  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
-    <span>Total labels</span>
-    <strong>{totalLabels}</strong>
-  </div>
-  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
-    <span>Total sheets</span>
-    <strong>{totalSheets || 0}</strong>
-  </div>
-  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
-    <span>Labels per sheet</span>
-    <strong>{LABELS_PER_PAGE}</strong>
-  </div>
-</div>
-
-<div
-  style={{
-    marginTop: "20px",
-    borderRadius: "12px",
-    border: "1px solid #e5e5e5",
-    padding: "16px",
-    display: "grid",
-    gap: "10px",
-  }}
->
-  <div style={{ fontSize: "14px", fontWeight: 700 }}>Batch</div>
-
-  {batchJobs.length === 0 ? (
-    <div style={{ fontSize: "14px", color: "#666" }}>No fits added yet.</div>
-  ) : (
-    batchJobs.map((job) => {
-      const jobTotal = SIZES.reduce((sum, size) => sum + (job.counts[size] || 0), 0);
-
-      return (
-        <div
-          key={job.id}
-          style={{
-            border: "1px solid #e5e5e5",
-            borderRadius: "10px",
-            padding: "10px 12px",
-            background: "#fff",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "12px",
-          }}
-        >
-<div>
-  <div style={{ fontSize: "14px", fontWeight: 600 }}>
-    {job.fitName}
-  </div>
-
-  <div style={{ fontSize: "12px", color: "#666" }}>
-    {jobTotal} labels
-  </div>
-
-  <div style={{ fontSize: "12px", color: "#999", marginTop: "4px" }}>
-    {SIZES
-      .filter((size) => job.counts[size] > 0)
-      .map((size) => `${size}×${job.counts[size]}`)
-      .join(" • ")}
-  </div>
-</div>
-
-          <button
-            type="button"
-            onClick={() => removeBatchJob(job.id)}
-            style={{
-              border: "none",
-              background: "transparent",
-              color: "#666",
-              cursor: "pointer",
-              fontSize: "13px",
-            }}
-          >
-            Remove
-          </button>
-        </div>
-      );
-    })
-  )}
-</div>
-
-<div style={{ marginTop: "16px", display: "grid", gap: "10px" }}>
-  <button
-  type="button"
-  onClick={resetAll}
-  style={{
-    width: "100%",
-    borderRadius: "12px",
-    background: "#fff",
-    color: "#000",
-    padding: "12px 14px",
-    fontWeight: 600,
-    border: "1px solid #d4d4d4",
-    cursor: "pointer",
-  }}
->
-  Reset all
-</button>
-<button
-    type="button"
-    onClick={addCurrentFitToBatch}
-    style={{
-      width: "100%",
-      borderRadius: "12px",
-      background: "#fff",
-      color: "#000",
-      padding: "14px 16px",
-      fontWeight: 600,
-      border: "1px solid #d4d4d4",
-      cursor: "pointer",
-    }}
-  >
-    Add fit to batch
-  </button>
-
-  <button
-    type="button"
-    onClick={printDocument}
-    style={{
-      width: "100%",
-      borderRadius: "12px",
-      background: "#000",
-      color: "#fff",
-      padding: "14px 16px",
-      fontWeight: 600,
-      border: "none",
-      cursor: "pointer",
-    }}
-  >
-    Print / Save PDF
-  </button>
-</div>
-
-      </aside>
-
-      <main style={{ display: "grid", gap: "16px", width: "100%" }}>
-        <div>
-          <h2 style={{ margin: 0, fontSize: "16px", fontWeight: 500 }}>Preview</h2>
-        </div>
-
-<div
-  style={{
-    overflowX: "auto",
-    overflowY: "auto",
-    borderRadius: "16px",
-    border: "1px solid #e5e5e5",
-    background: "#e5e5e5",
-    padding: "16px",
-  }}
->
-          <div
-            id="print-root"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "24px",
-              alignItems: "center",
-              minWidth: "max-content",
-            }}
-          >
-            {(pages.length ? pages : [[]]).map((pageSizes, pageIndex) => (
-              <div
-                key={pageIndex}
-                className="page-break"
-                style={{ display: "flex", flexDirection: "column", gap: "0" }}
-              >
-<PagePreview labels={pageSizes} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
-);
+  );
 }
