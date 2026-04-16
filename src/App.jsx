@@ -1,4 +1,12 @@
-
+ const hasAnyQuantity = activeSizes.some((size) => (counts[size] || 0) > 0);
+  if (!hasAnyQuantity) return;
+const nextJob = {
+      id: ${fitName}-${Date.now()},
+      fitKey,
+fitName: matchedFit && matchedFit.name ? matchedFit.name : fitName,
+desc: matchedFit && matchedFit.desc ? matchedFit.desc : "",
+      counts: pdfCounts,
+      sizes:
 import { useEffect, useMemo, useState } from "react";
 import logoUrl from "./assets/logo.svg";
 import * as pdfjsLib from "pdfjs-dist";
@@ -564,6 +572,7 @@ function addCurrentFitToBatch() {
   resetCounts();
 }
 
+
 async function handlePdfUpload(e) {
   const files = Array.from(e.target.files).slice(0, 10);
   setImportPreview([]);
@@ -579,21 +588,22 @@ async function handlePdfUpload(e) {
     const matchedFit = FITS[fitKey] || customFits[fitKey];
     const hasNoCounts = Object.keys(pdfCounts).length === 0;
 
-    const nextJob = {
-      id: `${fitName}-${Date.now()}`,
-      fitKey,
-      fitName: matchedFit?.name || fitName,
-      desc: matchedFit?.desc || "",
-      counts: pdfCounts,
-      sizes:
-        matchedFit?.sizes ||
-        Object.keys(pdfCounts).map((v) =>
+const nextJob = {
+  id: `${fitName}-${Date.now()}`,
+  fitKey,
+  fitName: matchedFit && matchedFit.name ? matchedFit.name : fitName,
+  desc: matchedFit && matchedFit.desc ? matchedFit.desc : "",
+  counts: pdfCounts,
+  sizes:
+    matchedFit && matchedFit.sizes
+      ? matchedFit.sizes
+      : Object.keys(pdfCounts).map((v) =>
           Number.isNaN(Number(v)) ? v : Number(v)
         ),
-      parseError: hasNoCounts,
-    };
+  parseError: hasNoCounts,
+};
 
-    setImportPreview((prev) => [...prev, nextJob]);
+setImportPreview((prev) => [...prev, nextJob]);
   }
 }
 
