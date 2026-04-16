@@ -16,7 +16,11 @@ const PAGE = {
   labelHeightIn: 4.0,
 };
 
-const NUMERIC_SIZES = Array.from({ length: 22 }, (_, i) => 23 + i);
+const NUMERIC_SIZES = [
+  23, 24, 25, 26,
+  27, 28, 29, 30, 31, 32, 33, 34,
+  36, 38, 40, 42, 44
+];
 const LETTER_SIZES = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
 
 const FITS = {
@@ -284,14 +288,14 @@ function Label({ fitName, desc, size }) {
   const descLines = wrapText(desc, 30);
   const isLongFit = fitName.length > 12;
 
-  return (
-    <div
-      style={{
-        width: `${PAGE.labelWidthIn}in`,
-        height: `${PAGE.labelHeightIn}in`,
-        background: "white",
-      }}
-    >
+return (
+  <div
+    style={{
+      width: `${PAGE.labelWidthIn}in`,
+      height: `${PAGE.labelHeightIn}in`,
+      background: "white",
+    }}
+  >
       <svg
         viewBox="0 0 108 288"
         width="100%"
@@ -996,16 +1000,17 @@ function handleSizeInputKeyDown(e) {
               </button>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "8px",
-                maxHeight: "340px",
-                overflowY: "auto",
-                paddingRight: "4px",
-              }}
-            >
+
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr",
+    gap: "8px",
+    maxHeight: "340px",
+    overflowY: "auto",
+    paddingRight: "4px",
+  }}
+>
               {activeSizes.map((size) => (
                 <label
                   key={size}
@@ -1030,7 +1035,7 @@ function handleSizeInputKeyDown(e) {
                     onChange={(e) => updateCount(size, e.target.value)}
                     onKeyDown={handleSizeInputKeyDown}
                     style={{
-                      width: "70px",
+                      width: "56px",
                       borderRadius: "8px",
                       border: "1px solid #d4d4d4",
                       padding: "6px 8px",
