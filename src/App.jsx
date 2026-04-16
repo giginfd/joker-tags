@@ -1,12 +1,3 @@
- const hasAnyQuantity = activeSizes.some((size) => (counts[size] || 0) > 0);
-  if (!hasAnyQuantity) return;
-const nextJob = {
-      id: ${fitName}-${Date.now()},
-      fitKey,
-fitName: matchedFit && matchedFit.name ? matchedFit.name : fitName,
-desc: matchedFit && matchedFit.desc ? matchedFit.desc : "",
-      counts: pdfCounts,
-      sizes:
 import { useEffect, useMemo, useState } from "react";
 import logoUrl from "./assets/logo.svg";
 import * as pdfjsLib from "pdfjs-dist";
