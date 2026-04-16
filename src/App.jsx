@@ -1,5 +1,12 @@
+
 import { useEffect, useMemo, useState } from "react";
 import logoUrl from "./assets/logo.svg";
+import * as pdfjsLib from "pdfjs-dist";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.mjs",
+  import.meta.url
+).toString();
 
 const PAGE = {
   widthIn: 11,
@@ -77,6 +84,23 @@ function slugifyFitName(name) {
     .replace(/^_+|_+$/g, "");
 }
 
+function findFitKeyFromName(fitName) {
+  const normalized = fitName.trim().toUpperCase();
+
+  const directMatch = Object.values(FITS).find(
+    (fit) => fit.name.toUpperCase() === normalized
+  );
+  if (directMatch) return directMatch.key;
+
+  const compact = normalized.replace(/\s+/g, "");
+  const compactMatch = Object.values(FITS).find(
+    (fit) => fit.name.toUpperCase().replace(/\s+/g, "") === compact
+  );
+  if (compactMatch) return compactMatch.key;
+
+  return slugifyFitName(fitName);
+}
+
 function chunk(items, size) {
   const chunks = [];
   for (let i = 0; i < items.length; i += size) {
@@ -127,9 +151,69 @@ function wrapText(text, maxCharsPerLine = 28) {
   return lines;
 }
 
+async function parsePdf(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+  let fullText = "";
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const strings = content.items.map((item) => item.str);
+    fullText += strings.join(" ") + "\n";
+  }
+
+  return fullText;
+}
+
+function extractFitName(text) {
+  const match = text.match(/\d{9}\s+([A-Z]+ ?[A-Z]*)\s+KV-/i);
+  if (!match) return "UNKNOWN";
+
+  let name = match[1];
+  name = name.replace(/([A-Z]+)(GUY)/, "$1 $2");
+
+  return name.trim().toUpperCase();
+}
+
+
+function extractOrderData(text) {
+  const fitName = extractFitName(text);
+  const normalized = text.replace(/\s+/g, " ").trim();
+
+  const blockMatch = normalized.match(
+    /QUANTITÉ\s*\/\s*QUANTITY\s+(.+?)\s+GRANDEUR\s*\/\s*SIZE\s+(.+?)\s+TOTAL\s*:/i
+  );
+
+  if (!blockMatch) {
+    return { fitName, counts: {} };
+  }
+
+  const sizePart = blockMatch[1].trim();
+  const qtyPart = blockMatch[2].trim();
+
+  const sizeTokens = sizePart.split(/\s+/).filter(Boolean);
+  const qtyTokens = qtyPart
+    .split(/\s+/)
+    .map(Number)
+    .filter((n) => !Number.isNaN(n));
+
+  const counts = {};
+
+  sizeTokens.forEach((size, i) => {
+    const numericSize = Number(size);
+    const parsedSize = Number.isNaN(numericSize) ? size.toUpperCase() : numericSize;
+    counts[parsedSize] = qtyTokens[i] || 0;
+  });
+
+  return { fitName, counts };
+}
+
 function printDocument() {
   window.print();
 }
+
 
 function ensurePrintStyles() {
   const existing = document.getElementById("print-style");
@@ -376,12 +460,16 @@ export default function App() {
   const [fitKey, setFitKey] = useState("bestie");
   const [fitQuery, setFitQuery] = useState("");
   const [fitMenuOpen, setFitMenuOpen] = useState(false);
+
   const [batchJobs, setBatchJobs] = useState([]);
+  const [importPreview, setImportPreview] = useState([]);
+
   const [showNewFitForm, setShowNewFitForm] = useState(false);
   const [newFitName, setNewFitName] = useState("");
   const [newFitDesc, setNewFitDesc] = useState("");
   const [customFits, setCustomFits] = useState({});
-  const [isWideScreen, setIsWideScreen] = useState(() => window.innerWidth >= 1400);
+
+  const [isWideScreen, setIsWideScreen] = useState(false);
 
   useEffect(() => {
     ensurePrintStyles();
@@ -459,24 +547,57 @@ export default function App() {
     return queue;
   }
 
-  function addCurrentFitToBatch() {
-    const hasAnyQuantity = activeSizes.some((size) => (counts[size] || 0) > 0);
-    if (!hasAnyQuantity) return;
+function addCurrentFitToBatch() {
+  const hasAnyQuantity = activeSizes.some((size) => (counts[size] || 0) > 0);
+  if (!hasAnyQuantity) return;
+
+  const nextJob = {
+    id: `${fitKey}-${Date.now()}`,
+    fitKey,
+    fitName: fit.name,
+    desc: fit.desc,
+    counts: { ...counts },
+    sizes: [...activeSizes],
+  };
+
+  setBatchJobs((prev) => [...prev, nextJob]);
+  resetCounts();
+}
+
+async function handlePdfUpload(e) {
+  const files = Array.from(e.target.files).slice(0, 10);
+  setImportPreview([]);
+
+  for (const file of files) {
+    const text = await parsePdf(file);
+    console.log("PDF TEXT:", text);
+
+    const { fitName, counts: pdfCounts } = extractOrderData(text);
+    console.log("PARSED:", fitName, pdfCounts);
+
+    const fitKey = findFitKeyFromName(fitName);
+    const matchedFit = FITS[fitKey] || customFits[fitKey];
+    const hasNoCounts = Object.keys(pdfCounts).length === 0;
 
     const nextJob = {
-      id: `${fitKey}-${Date.now()}`,
+      id: `${fitName}-${Date.now()}`,
       fitKey,
-      fitName: fit.name,
-      desc: fit.desc,
-      counts: { ...counts },
-      sizes: [...activeSizes],
+      fitName: matchedFit?.name || fitName,
+      desc: matchedFit?.desc || "",
+      counts: pdfCounts,
+      sizes:
+        matchedFit?.sizes ||
+        Object.keys(pdfCounts).map((v) =>
+          Number.isNaN(Number(v)) ? v : Number(v)
+        ),
+      parseError: hasNoCounts,
     };
 
-    setBatchJobs((prev) => [...prev, nextJob]);
-    resetCounts();
+    setImportPreview((prev) => [...prev, nextJob]);
   }
+}
 
-  function handleSizeInputKeyDown(e) {
+function handleSizeInputKeyDown(e) {
     if (e.key === "Enter") {
       e.preventDefault();
       addCurrentFitToBatch();
@@ -487,6 +608,7 @@ export default function App() {
       if (input) input.focus();
     }
   }
+
 
   function resetAll() {
     setFitKey("bestie");
@@ -581,6 +703,72 @@ export default function App() {
               Single-fit job builder for 14-up landscape sheets.
             </p>
           </div>
+
+<input
+  type="file"
+  accept="application/pdf"
+  multiple
+  onChange={handlePdfUpload}
+  style={{ marginTop: "10px" }}
+/>
+
+{importPreview.length > 0 && (
+  <div
+    style={{
+      marginTop: "20px",
+      border: "1px solid #ccc",
+      padding: "10px",
+      borderRadius: "12px",
+      background: "#fafafa",
+    }}
+  >
+    <h3 style={{ margin: "0 0 10px", fontSize: "14px" }}>Import Preview</h3>
+
+    {importPreview.map((job) => (
+      <div
+        key={job.id}
+        style={{
+          padding: "8px 0",
+          borderTop: "1px solid #eee",
+        }}
+      >
+        <strong>{job.fitName}</strong>
+
+        {job.parseError ? (
+          <div style={{ color: "#b91c1c", fontSize: "13px", marginTop: "4px" }}>
+            Parsing failed. Please verify this PDF before importing.
+          </div>
+        ) : (
+          <div style={{ marginTop: "4px" }}>
+            {Object.entries(job.counts)
+              .filter(([_, v]) => v > 0)
+              .map(([size, qty]) => `${size}×${qty}`)
+              .join(" • ")}
+          </div>
+        )}
+      </div>
+    ))}
+
+    <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+      <button
+        type="button"
+        onClick={() => {
+          setBatchJobs((prev) => [...prev, ...importPreview]);
+          setImportPreview([]);
+        }}
+      >
+        Confirm Import
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setImportPreview([])}
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
 
           <div style={{ display: "grid", gap: "16px" }}>
             <div>
