@@ -233,26 +233,26 @@ function Label({ fitName, desc, size }) {
 
         <text
           x="80"
-          y="130"
+          y="133"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize={isLongFit ? "7.5" : "9"}
           textAnchor="middle"
           dominantBaseline="middle"
-          transform="rotate(180 76 130)"
+          transform="rotate(180 76 133)"
         >
           {fitName}
         </text>
 
         <text
           x="16"
-          y="130"
+          y="133"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize="9"
           textAnchor="middle"
           dominantBaseline="middle"
-          transform="rotate(180 16 130)"
+          transform="rotate(180 16 133)"
         >
           {size}
         </text>
