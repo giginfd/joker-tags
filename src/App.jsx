@@ -233,26 +233,28 @@ function Label({ fitName, desc, size }) {
 
         <text
           x="80"
-          y="133"
+          y="135"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize={isLongFit ? "7.5" : "9"}
-          textAnchor="middle"
+ fontWeight="600"          
+textAnchor="middle"
           dominantBaseline="middle"
-          transform="rotate(180 76 133)"
+          transform="rotate(180 76 135)"
         >
           {fitName}
         </text>
 
         <text
           x="16"
-          y="133"
+          y="135"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize="9"
-          textAnchor="middle"
+ fontWeight="600"          
+textAnchor="middle"
           dominantBaseline="middle"
-          transform="rotate(180 16 133)"
+          transform="rotate(180 16 135)"
         >
           {size}
         </text>
@@ -293,7 +295,8 @@ function Label({ fitName, desc, size }) {
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize="8"
-          textAnchor="start"
+ fontWeight="600"         
+textAnchor="start"
           dominantBaseline="middle"
         >
           {fitName}
@@ -315,7 +318,8 @@ function Label({ fitName, desc, size }) {
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize="8"
-          textAnchor="middle"
+ fontWeight="600"          
+textAnchor="middle"
           dominantBaseline="middle"
         >
           {size}
@@ -327,7 +331,8 @@ function Label({ fitName, desc, size }) {
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize="7"
-          textAnchor="start"
+ fontWeight="500"          
+textAnchor="start"
         >
           {descLines.map((line, i) => (
             <tspan key={i} x="14" dy={i === 0 ? 0 : "8.2"}>
