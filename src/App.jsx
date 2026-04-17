@@ -345,13 +345,13 @@ textAnchor="middle"
           {size}
         </text>
 
-        <g transform="translate(0, -17)">
+        <g transform="translate(0, -12)">
         <text
           x="54"
           y="172"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="6"
+          fontSize="6.5"
           textAnchor="middle"
           dominantBaseline="middle"
         >
@@ -361,7 +361,7 @@ textAnchor="middle"
         <image
           href={logoUrl}
           x="23"
-          y="184"
+          y="189"
           width="64"
           height="36"
           preserveAspectRatio="xMidYMid meet"
