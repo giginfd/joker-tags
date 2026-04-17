@@ -305,14 +305,14 @@ return (
 >
 
 <text
-  x="54"
+  x="57"
   y="36"
   fill="#000"
   fontFamily="Arial, Helvetica, sans-serif"
   fontSize="5"
   textAnchor="middle"
   dominantBaseline="middle"
-  transform="rotate(180 54 36)"
+  transform="rotate(180 57 36)"
 >
   NAKEDANDFAMOUSDENIM.COM
 </text>
@@ -360,10 +360,10 @@ textAnchor="middle"
 
 <image
   href={logoUrl}
-  x="24"
+  x="22.5"
   y="180"
-  width="60"
-  height="34"
+  width="63"
+  height="36"
   preserveAspectRatio="xMidYMid meet"
 />
 
