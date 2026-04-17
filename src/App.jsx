@@ -345,7 +345,7 @@ textAnchor="middle"
           {size}
         </text>
 
-        <g transform="translate(0, -20)">
+        <g transform="translate(0, -17)">
         <text
           x="54"
           y="172"
