@@ -370,7 +370,7 @@ textAnchor="middle"
         <line
           x1="14"
           y1="232"
-          x2="90"
+          x2="86"
           y2="232"
           stroke="#000"
           strokeWidth="0.45"
