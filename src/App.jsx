@@ -422,7 +422,7 @@ textAnchor="middle"
 textAnchor="start"
         >
           {descLines.map((line, i) => (
-            <tspan key={i} x="14" dy={i === 0 ? 0 : "9.0"}>
+            <tspan key={i} x="4" dy={i === 0 ? 0 : "9.0"}>
               {line}
             </tspan>
           ))}
