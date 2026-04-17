@@ -346,26 +346,26 @@ textAnchor="middle"
         </text>
 
         <g transform="translate(0, -12)">
-        <text
-          x="54"
-          y="172"
-          fill="#000"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="6.5"
-          textAnchor="middle"
-          dominantBaseline="middle"
-        >
-          MADE IN / FAIT AU CANADA
-        </text>
+       <text
+  x="54"
+  y="168"
+  fill="#000"
+  fontFamily="Arial, Helvetica, sans-serif"
+  fontSize="6.5"
+  textAnchor="middle"
+  dominantBaseline="middle"
+>
+  MADE IN / FAIT AU CANADA
+</text>
 
-        <image
-          href={logoUrl}
-          x="23"
-          y="189"
-          width="64"
-          height="36"
-          preserveAspectRatio="xMidYMid meet"
-        />
+<image
+  href={logoUrl}
+  x="24"
+  y="180"
+  width="60"
+  height="34"
+  preserveAspectRatio="xMidYMid meet"
+/>
 
         <line
           x1="14"
