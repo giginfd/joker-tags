@@ -305,14 +305,14 @@ return (
 >
 
 <text
-  x="14"
+  x="54"
   y="36"
   fill="#000"
   fontFamily="Arial, Helvetica, sans-serif"
   fontSize="5"
   textAnchor="middle"
   dominantBaseline="middle"
-  transform="rotate(180 14 36)"
+  transform="rotate(180 54 36)"
 >
   NAKEDANDFAMOUSDENIM.COM
 </text>
@@ -390,7 +390,7 @@ textAnchor="start"
         </text>
 
         <rect
-          x="86"
+          x="85"
           y="232"
           width="19"
           height="19"
@@ -400,7 +400,7 @@ textAnchor="start"
         />
 
         <text
-          x="95.5"
+          x="94.5"
           y="241.5"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
