@@ -305,14 +305,14 @@ return (
 >
 
 <text
-  x="54"
+  x="14"
   y="36"
   fill="#000"
   fontFamily="Arial, Helvetica, sans-serif"
   fontSize="5"
   textAnchor="middle"
   dominantBaseline="middle"
-  transform="rotate(180 54 36)"
+  transform="rotate(180 14 36)"
 >
   NAKEDANDFAMOUSDENIM.COM
 </text>
@@ -368,7 +368,7 @@ textAnchor="middle"
 />
 
         <line
-          x1="14"
+          x1="4"
           y1="232"
           x2="86"
           y2="232"
@@ -377,11 +377,11 @@ textAnchor="middle"
         />
 
         <text
-          x="14"
+          x="4"
           y="241.5"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="8"
+          fontSize="8.3"
  fontWeight="600"         
 textAnchor="start"
           dominantBaseline="middle"
@@ -404,7 +404,7 @@ textAnchor="start"
           y="241.5"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="8"
+          fontSize="8.3"
  fontWeight="600"          
 textAnchor="middle"
           dominantBaseline="middle"
@@ -413,7 +413,7 @@ textAnchor="middle"
         </text>
 
         <text
-          x="14"
+          x="4"
           y="268"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
