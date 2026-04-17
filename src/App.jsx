@@ -345,6 +345,7 @@ textAnchor="middle"
           {size}
         </text>
 
+        <g transform="translate(0, -20)">
         <text
           x="54"
           y="172"
@@ -426,6 +427,7 @@ textAnchor="start"
             </tspan>
           ))}
         </text>
+          </g>
       </svg>
     </div>
   );
