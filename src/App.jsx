@@ -72,6 +72,18 @@ const FITS = {
     desc: "Relaxed fit, tapered leg.\nCoupe relax, jambe fuselée.",
     sizes: NUMERIC_SIZES,
   },
+    weird_guy: {
+    key: "weird_guy",
+    name: "WEIRD GUY",
+    desc: "Mid-rise, tapered leg.\nMi-taille, jambe fuselée.",
+    sizes: NUMERIC_SIZES,
+  },
+  strong_guy: {
+    key: "strong_guy",
+    name: "STRONG GUY",
+    desc: "Relaxed straight.\nCoupe droite décontractée.",
+    sizes: NUMERIC_SIZES,
+  },
 };
 
 const LABELS_PER_PAGE = PAGE.cols * PAGE.rows;
