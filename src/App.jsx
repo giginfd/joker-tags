@@ -197,6 +197,10 @@ function extractFitName(text) {
     ["BESTIE", "BESTIE"],
     ["CHORE COAT", "CHORE COAT"],
     ["DENIM JACKET", "DENIM JACKET"],
+    ["WEIRDGUY", "WEIRD GUY"],
+["WEIRD GUY", "WEIRD GUY"],
+["STRONGGUY", "STRONG GUY"],
+["STRONG GUY", "STRONG GUY"],
   ];
 
   for (const [needle, fitName] of fitAliases) {
