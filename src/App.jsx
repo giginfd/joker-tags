@@ -235,8 +235,8 @@ function ensurePrintStyles() {
         padding: 0 !important;
         background: white !important;
         width: 11in !important;
-        height: 8.5in !important;
-        overflow: hidden !important;
+        min-height: 8.5in !important;
+        overflow: visible !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -251,7 +251,7 @@ function ensurePrintStyles() {
       }
 
       #print-root {
-        position: fixed !important;
+        position: absolute !important;
         left: 0 !important;
         top: 0 !important;
         width: 11in !important;
@@ -262,6 +262,8 @@ function ensurePrintStyles() {
 
       .page-break {
         display: block !important;
+        width: 11in !important;
+        height: 8.5in !important;
         margin: 0 !important;
         padding: 0 !important;
         break-after: page !important;
@@ -273,7 +275,7 @@ function ensurePrintStyles() {
         page-break-after: auto !important;
       }
 
-      #print-root > .page-break > div:last-child {
+      #print-root > .page-break > div {
         border: none !important;
         box-shadow: none !important;
         margin: 0 !important;
@@ -283,7 +285,6 @@ function ensurePrintStyles() {
 
   document.head.appendChild(style);
 }
-
 function Label({ fitName, desc, size }) {
   const descLines = wrapText(desc, 30);
   const isLongFit = fitName.length > 12;
@@ -665,7 +666,7 @@ function handleSizeInputKeyDown(e) {
   }
 
   const batchQueue = useMemo(() => {
-    return batchJobs.flatMap((job) => buildJobQueue(job));
+return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
   }, [batchJobs]);
 
   const pages = useMemo(() => chunk(batchQueue, LABELS_PER_PAGE), [batchQueue]);
