@@ -573,9 +573,14 @@ const fitList = useMemo(() => {
   }, [activeSizes]);
 
   function updateCount(size, value) {
-    const numeric = Math.max(0, Number.parseInt(value || "0", 10) || 0);
-    setCounts((prev) => ({ ...prev, [size]: numeric }));
+  if (value === "") {
+    setCounts((prev) => ({ ...prev, [size]: 0 }));
+    return;
   }
+
+  const numeric = Math.max(0, Number.parseInt(value, 10) || 0);
+  setCounts((prev) => ({ ...prev, [size]: numeric }));
+}
 
   function resetCounts() {
     setCounts(Object.fromEntries(activeSizes.map((size) => [size, 0])));
@@ -1227,7 +1232,7 @@ overflowY: "auto",
                     type="number"
                     min={0}
                     step={1}
-                    value={counts[size] || 0}
+                   value={counts[size] === 0 ? "" : counts[size]}
                     onChange={(e) => updateCount(size, e.target.value)}
                     onKeyDown={handleSizeInputKeyDown}
                     style={{
