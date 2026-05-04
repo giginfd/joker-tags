@@ -820,7 +820,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
   >
     <h3 style={{ margin: "0 0 10px", fontSize: "14px" }}>Import Preview</h3>
 
-   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
   <strong>{job.fitName}</strong>
 
   <button
@@ -846,31 +846,32 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
     Change
   </button>
 </div>
+
 {(job.fitName === "UNKNOWN" || job.manualOverride) && (
   <select
     value={job.fitKey || ""}
-   onChange={(e) => {
-  const selectedFitKey = e.target.value;
-  const selectedFit = allFits[selectedFitKey];
+    onChange={(e) => {
+      const selectedFitKey = e.target.value;
+      const selectedFit = allFits[selectedFitKey];
 
-  if (!selectedFit) return;
+      if (!selectedFit) return;
 
-  setImportPreview((prev) =>
-    prev.map((item) =>
-      item.id === job.id
-        ? {
-            ...item,
-            fitKey: selectedFitKey,
-            fitName: selectedFit.name,
-            desc: selectedFit.desc,
-            sizes: selectedFit.sizes || NUMERIC_SIZES,
-            parseError: Object.keys(item.counts).length === 0,
-            manualOverride: false,
-          }
-        : item
-    )
-  );
-}}
+      setImportPreview((prev) =>
+        prev.map((item) =>
+          item.id === job.id
+            ? {
+                ...item,
+                fitKey: selectedFitKey,
+                fitName: selectedFit.name,
+                desc: selectedFit.desc,
+                sizes: selectedFit.sizes || NUMERIC_SIZES,
+                parseError: Object.keys(item.counts).length === 0,
+                manualOverride: false,
+              }
+            : item
+        )
+      );
+    }}
     style={{
       marginTop: "6px",
       width: "100%",
@@ -887,7 +888,6 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
     ))}
   </select>
 )}
-      
 
         {job.parseError ? (
           <div style={{ color: "#b91c1c", fontSize: "13px", marginTop: "4px" }}>
