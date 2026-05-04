@@ -19,8 +19,9 @@ const PAGE = {
 const NUMERIC_SIZES = [
   23, 24, 25, 26,
   27, 28, 29, 30, 31, 32, 33, 34,
-  36, 38, 40, 42, 44
+  36, 38, 40, 42, 44,
 ];
+
 const LETTER_SIZES = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
 
 const FITS = {
@@ -39,7 +40,7 @@ const FITS = {
   denim_jacket: {
     key: "denim_jacket",
     name: "DENIM JACKET",
-    desc: "Classic fit.\nCoupe classique.",
+    desc: "Classic fit.\nFit classique.",
     sizes: LETTER_SIZES,
   },
   groovy_guy: {
@@ -57,22 +58,22 @@ const FITS = {
   true_guy: {
     key: "true_guy",
     name: "TRUE GUY",
-    desc: "Straight leg, regular rise.\nCoupe droite, taille rég.",
+    desc: "Straight leg, regular rise.\nJambe droite, taille régulière.",
     sizes: NUMERIC_SIZES,
   },
   super_guy: {
     key: "super_guy",
     name: "SUPER GUY",
-    desc: "Regular rise, skinny leg.\nTaille rég., jambe étroite.",
+    desc: "Regular rise, skinny leg.\nTaille régulière, jambe étroite.",
     sizes: NUMERIC_SIZES,
   },
   easy_guy: {
     key: "easy_guy",
     name: "EASY GUY",
-    desc: "Relaxed fit, tapered leg.\nCoupe relax, jambe fuselée.",
+    desc: "Relaxed fit, tapered leg.\nFit relax, jambe fuselée.",
     sizes: NUMERIC_SIZES,
   },
-    weird_guy: {
+  weird_guy: {
     key: "weird_guy",
     name: "WEIRD GUY",
     desc: "Mid-rise, tapered leg.\nMi-taille, jambe fuselée.",
@@ -81,7 +82,7 @@ const FITS = {
   strong_guy: {
     key: "strong_guy",
     name: "STRONG GUY",
-    desc: "Relaxed straight.\nCoupe droite décontractée.",
+    desc: "Relaxed straight.\nFit droit décontracté.",
     sizes: NUMERIC_SIZES,
   },
 };
@@ -194,13 +195,13 @@ function extractFitName(text) {
     ["TRUE GUY", "TRUE GUY"],
     ["GROOVYGUY", "GROOVY GUY"],
     ["GROOVY GUY", "GROOVY GUY"],
+    ["WEIRDGUY", "WEIRD GUY"],
+    ["WEIRD GUY", "WEIRD GUY"],
+    ["STRONGGUY", "STRONG GUY"],
+    ["STRONG GUY", "STRONG GUY"],
     ["BESTIE", "BESTIE"],
     ["CHORE COAT", "CHORE COAT"],
     ["DENIM JACKET", "DENIM JACKET"],
-    ["WEIRDGUY", "WEIRD GUY"],
-["WEIRD GUY", "WEIRD GUY"],
-["STRONGGUY", "STRONG GUY"],
-["STRONG GUY", "STRONG GUY"],
   ];
 
   for (const [needle, fitName] of fitAliases) {
@@ -236,15 +237,15 @@ function extractOrderData(text) {
   const counts = {};
 
   const paddedQtyTokens =
-  qtyTokens.length < sizeTokens.length
-    ? Array(sizeTokens.length - qtyTokens.length).fill(0).concat(qtyTokens)
-    : qtyTokens;
+    qtyTokens.length < sizeTokens.length
+      ? Array(sizeTokens.length - qtyTokens.length).fill(0).concat(qtyTokens)
+      : qtyTokens;
 
-sizeTokens.forEach((size, i) => {
-  const numericSize = Number(size);
-  const parsedSize = Number.isNaN(numericSize) ? size.toUpperCase() : numericSize;
-  counts[parsedSize] = paddedQtyTokens[i] || 0;
-});
+  sizeTokens.forEach((size, i) => {
+    const numericSize = Number(size);
+    const parsedSize = Number.isNaN(numericSize) ? size.toUpperCase() : numericSize;
+    counts[parsedSize] = paddedQtyTokens[i] || 0;
+  });
 
   return { fitName, counts };
 }
@@ -252,7 +253,6 @@ sizeTokens.forEach((size, i) => {
 function printDocument() {
   window.print();
 }
-
 
 function ensurePrintStyles() {
   const existing = document.getElementById("print-style");
@@ -323,38 +323,38 @@ function ensurePrintStyles() {
 
   document.head.appendChild(style);
 }
+
 function Label({ fitName, desc, size }) {
   const descLines = wrapText(desc, 30);
   const isLongFit = fitName.length > 12;
 
-return (
-  <div
-    style={{
-      width: `${PAGE.labelWidthIn}in`,
-      height: `${PAGE.labelHeightIn}in`,
-      background: "white",
-    }}
-  >
+  return (
+    <div
+      style={{
+        width: `${PAGE.labelWidthIn}in`,
+        height: `${PAGE.labelHeightIn}in`,
+        background: "white",
+      }}
+    >
       <svg
         viewBox="0 0 108 288"
         width="100%"
         height="100%"
         xmlns="http://www.w3.org/2000/svg"
         style={{ display: "block", overflow: "hidden" }}
->
-
-<text
-  x="57"
-  y="36"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="5"
-  textAnchor="middle"
-  dominantBaseline="middle"
-  transform="rotate(180 57 36)"
->
-  NAKEDANDFAMOUSDENIM.COM
-</text>
+      >
+        <text
+          x="57"
+          y="36"
+          fill="#000"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="5"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          transform="rotate(180 57 36)"
+        >
+          NAKEDANDFAMOUSDENIM.COM
+        </text>
 
         <text
           x="80"
@@ -362,8 +362,8 @@ return (
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize={isLongFit ? "7.5" : "9"}
- fontWeight="600"          
-textAnchor="middle"
+          fontWeight="600"
+          textAnchor="middle"
           dominantBaseline="middle"
           transform="rotate(180 76 135)"
         >
@@ -376,8 +376,8 @@ textAnchor="middle"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
           fontSize="9"
- fontWeight="600"          
-textAnchor="middle"
+          fontWeight="600"
+          textAnchor="middle"
           dominantBaseline="middle"
           transform="rotate(180 16 135)"
         >
@@ -385,88 +385,88 @@ textAnchor="middle"
         </text>
 
         <g transform="translate(0, -12)">
-       <text
-  x="54"
-  y="168"
-  fill="#000"
-  fontFamily="Arial, Helvetica, sans-serif"
-  fontSize="6.5"
-  textAnchor="middle"
-  dominantBaseline="middle"
->
-  MADE IN / FAIT AU CANADA
-</text>
+          <text
+            x="54"
+            y="168"
+            fill="#000"
+            fontFamily="Arial, Helvetica, sans-serif"
+            fontSize="6.5"
+            textAnchor="middle"
+            dominantBaseline="middle"
+          >
+            MADE IN / FAIT AU CANADA
+          </text>
 
-<image
-  href={logoUrl}
-  x="22.5"
-  y="180"
-  width="63"
-  height="36"
-  preserveAspectRatio="xMidYMid meet"
-/>
+          <image
+            href={logoUrl}
+            x="22.5"
+            y="180"
+            width="63"
+            height="36"
+            preserveAspectRatio="xMidYMid meet"
+          />
 
-        <line
-          x1="4"
-          y1="232"
-          x2="86"
-          y2="232"
-          stroke="#000"
-          strokeWidth="0.45"
-        />
+          <line
+            x1="4"
+            y1="232"
+            x2="86"
+            y2="232"
+            stroke="#000"
+            strokeWidth="0.45"
+          />
 
-        <text
-          x="4"
-          y="241.5"
-          fill="#000"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="8.3"
- fontWeight="600"         
-textAnchor="start"
-          dominantBaseline="middle"
-        >
-          {fitName}
-        </text>
+          <text
+            x="4"
+            y="241.5"
+            fill="#000"
+            fontFamily="Arial, Helvetica, sans-serif"
+            fontSize="8.3"
+            fontWeight="600"
+            textAnchor="start"
+            dominantBaseline="middle"
+          >
+            {fitName}
+          </text>
 
-        <rect
-          x="85"
-          y="232"
-          width="19"
-          height="19"
-          fill="none"
-          stroke="#000"
-          strokeWidth="0.45"
-        />
+          <rect
+            x="85"
+            y="232"
+            width="19"
+            height="19"
+            fill="none"
+            stroke="#000"
+            strokeWidth="0.45"
+          />
 
-        <text
-          x="94.5"
-          y="241.5"
-          fill="#000"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="8.3"
- fontWeight="600"          
-textAnchor="middle"
-          dominantBaseline="middle"
-        >
-          {size}
-        </text>
+          <text
+            x="94.5"
+            y="241.5"
+            fill="#000"
+            fontFamily="Arial, Helvetica, sans-serif"
+            fontSize="8.3"
+            fontWeight="600"
+            textAnchor="middle"
+            dominantBaseline="middle"
+          >
+            {size}
+          </text>
 
-        <text
-          x="4"
-          y="268"
-          fill="#000"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="8"
- fontWeight="500"          
-textAnchor="start"
-        >
-          {descLines.map((line, i) => (
-            <tspan key={i} x="4" dy={i === 0 ? 0 : "9.0"}>
-              {line}
-            </tspan>
-          ))}
-        </text>
-          </g>
+          <text
+            x="4"
+            y="268"
+            fill="#000"
+            fontFamily="Arial, Helvetica, sans-serif"
+            fontSize="8"
+            fontWeight="500"
+            textAnchor="start"
+          >
+            {descLines.map((line, i) => (
+              <tspan key={i} x="4" dy={i === 0 ? 0 : "9.0"}>
+                {line}
+              </tspan>
+            ))}
+          </text>
+        </g>
       </svg>
     </div>
   );
@@ -523,6 +523,8 @@ export default function App() {
       setIsWideScreen(window.innerWidth >= 1400);
     };
 
+    handleResize();
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -537,7 +539,7 @@ export default function App() {
         setCustomFits(parsed);
       }
     } catch (error) {
-      console.error("Failed to load custom fits", error);
+      console.error("Erreur lors du chargement des fits personnalisés", error);
     }
   }, []);
 
@@ -590,59 +592,58 @@ export default function App() {
     return queue;
   }
 
-function addCurrentFitToBatch() {
-  const hasAnyQuantity = activeSizes.some((size) => (counts[size] || 0) > 0);
-  if (!hasAnyQuantity) return;
+  function addCurrentFitToBatch() {
+    const hasAnyQuantity = activeSizes.some((size) => (counts[size] || 0) > 0);
+    if (!hasAnyQuantity) return;
 
-  const nextJob = {
-    id: `${fitKey}-${Date.now()}`,
-    fitKey,
-    fitName: fit.name,
-    desc: fit.desc,
-    counts: { ...counts },
-    sizes: [...activeSizes],
-  };
+    const nextJob = {
+      id: `${fitKey}-${Date.now()}`,
+      fitKey,
+      fitName: fit.name,
+      desc: fit.desc,
+      counts: { ...counts },
+      sizes: [...activeSizes],
+    };
 
-setBatchJobs((prev) => prev.concat(nextJob));
-  resetCounts();
-}
-
-
-async function handlePdfUpload(e) {
-  const files = Array.from(e.target.files).slice(0, 10);
-  setImportPreview([]);
-
-  for (const file of files) {
-    const text = await parsePdf(file);
-    console.log("PDF TEXT:", text);
-
-    const { fitName, counts: pdfCounts } = extractOrderData(text);
-    console.log("PARSED:", fitName, pdfCounts);
-
-    const fitKey = findFitKeyFromName(fitName);
-    const matchedFit = FITS[fitKey] || customFits[fitKey];
-    const hasNoCounts = Object.keys(pdfCounts).length === 0;
-
-const nextJob = {
-  id: `${fitName}-${Date.now()}`,
-  fitKey,
-  fitName: matchedFit && matchedFit.name ? matchedFit.name : fitName,
-  desc: matchedFit && matchedFit.desc ? matchedFit.desc : "",
-  counts: pdfCounts,
-  sizes:
-    matchedFit && matchedFit.sizes
-      ? matchedFit.sizes
-      : Object.keys(pdfCounts).map((v) =>
-          Number.isNaN(Number(v)) ? v : Number(v)
-        ),
-  parseError: hasNoCounts,
-};
-
-setImportPreview((prev) => [...prev, nextJob]);
+    setBatchJobs((prev) => prev.concat(nextJob));
+    resetCounts();
   }
-}
 
-function handleSizeInputKeyDown(e) {
+  async function handlePdfUpload(e) {
+    const files = Array.from(e.target.files).slice(0, 10);
+    setImportPreview([]);
+
+    for (const file of files) {
+      const text = await parsePdf(file);
+      console.log("TEXTE PDF:", text);
+
+      const { fitName, counts: pdfCounts } = extractOrderData(text);
+      console.log("PDF ANALYSÉ:", fitName, pdfCounts);
+
+      const fitKey = findFitKeyFromName(fitName);
+      const matchedFit = FITS[fitKey] || customFits[fitKey];
+      const hasNoCounts = Object.keys(pdfCounts).length === 0;
+
+      const nextJob = {
+        id: `${fitName}-${file.name}-${Date.now()}`,
+        fitKey,
+        fitName: matchedFit && matchedFit.name ? matchedFit.name : fitName,
+        desc: matchedFit && matchedFit.desc ? matchedFit.desc : "",
+        counts: pdfCounts,
+        sizes:
+          matchedFit && matchedFit.sizes
+            ? matchedFit.sizes
+            : Object.keys(pdfCounts).map((v) =>
+                Number.isNaN(Number(v)) ? v : Number(v)
+              ),
+        parseError: hasNoCounts,
+      };
+
+      setImportPreview((prev) => [...prev, nextJob]);
+    }
+  }
+
+  function handleSizeInputKeyDown(e) {
     if (e.key === "Enter") {
       e.preventDefault();
       addCurrentFitToBatch();
@@ -653,7 +654,6 @@ function handleSizeInputKeyDown(e) {
       if (input) input.focus();
     }
   }
-
 
   function resetAll() {
     setFitKey("bestie");
@@ -703,69 +703,69 @@ function handleSizeInputKeyDown(e) {
     setBatchJobs((prev) => prev.filter((job) => job.id !== jobId));
   }
 
-function addExtraLabelsToFillSheet() {
-  if (labelsNeededToFillSheet === 0 || batchJobs.length === 0) return;
+  function addExtraLabelsToFillSheet() {
+    if (labelsNeededToFillSheet === 0 || batchJobs.length === 0) return;
 
-  const ranked = [];
+    const ranked = [];
 
-  for (const job of batchJobs) {
-    for (const size of job.sizes || []) {
-      const qty = job.counts[size] || 0;
-      if (qty <= 0) continue;
+    for (const job of batchJobs) {
+      for (const size of job.sizes || []) {
+        const qty = job.counts[size] || 0;
+        if (qty <= 0) continue;
 
-      ranked.push({
-        job,
-        size,
-        qty,
-      });
-    }
-  }
-
-  ranked.sort((a, b) => b.qty - a.qty);
-
-  if (ranked.length === 0) return;
-
-  const extrasByJob = {};
-
-  for (let i = 0; i < labelsNeededToFillSheet; i += 1) {
-    const pick = ranked[i % ranked.length];
-    const jobId = pick.job.id;
-
-    if (!extrasByJob[jobId]) {
-      extrasByJob[jobId] = {
-        baseJob: pick.job,
-        counts: {},
-      };
+        ranked.push({
+          job,
+          size,
+          qty,
+        });
+      }
     }
 
-    extrasByJob[jobId].counts[pick.size] =
-      (extrasByJob[jobId].counts[pick.size] || 0) + 1;
+    ranked.sort((a, b) => b.qty - a.qty);
+
+    if (ranked.length === 0) return;
+
+    const extrasByJob = {};
+
+    for (let i = 0; i < labelsNeededToFillSheet; i += 1) {
+      const pick = ranked[i % ranked.length];
+      const jobId = pick.job.id;
+
+      if (!extrasByJob[jobId]) {
+        extrasByJob[jobId] = {
+          baseJob: pick.job,
+          counts: {},
+        };
+      }
+
+      extrasByJob[jobId].counts[pick.size] =
+        (extrasByJob[jobId].counts[pick.size] || 0) + 1;
+    }
+
+    const extraJobs = Object.values(extrasByJob).map((group) => ({
+      id: `extras-${group.baseJob.id}-${Date.now()}`,
+      fitKey: group.baseJob.fitKey,
+      fitName: group.baseJob.fitName,
+      desc: group.baseJob.desc,
+      counts: group.counts,
+      sizes: group.baseJob.sizes,
+      isExtra: true,
+    }));
+
+    setBatchJobs((prev) => prev.concat(extraJobs));
   }
-
-  const extraJobs = Object.values(extrasByJob).map((group) => ({
-  id: `extras-${group.baseJob.id}-${Date.now()}`,
-  fitKey: group.baseJob.fitKey,
-  fitName: group.baseJob.fitName, // clean
-  desc: group.baseJob.desc,
-  counts: group.counts,
-  sizes: group.baseJob.sizes,
-  isExtra: true, // internal use only
-}));
-
-setBatchJobs((prev) => prev.concat(extraJobs));
-}
 
   const batchQueue = useMemo(() => {
-return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
+    return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
   }, [batchJobs]);
 
   const pages = useMemo(() => chunk(batchQueue, LABELS_PER_PAGE), [batchQueue]);
   const totalLabels = batchQueue.length;
   const totalSheets = Math.ceil(totalLabels / LABELS_PER_PAGE);
   const labelsNeededToFillSheet =
-  totalLabels % LABELS_PER_PAGE === 0
-    ? 0
-    : LABELS_PER_PAGE - (totalLabels % LABELS_PER_PAGE);
+    totalLabels % LABELS_PER_PAGE === 0
+      ? 0
+      : LABELS_PER_PAGE - (totalLabels % LABELS_PER_PAGE);
 
   return (
     <div
@@ -798,151 +798,157 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
         >
           <div style={{ marginBottom: "20px" }}>
             <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 600 }}>
-              Joker tags generator
+              Générateur de joker tags
             </h1>
             <p style={{ margin: "6px 0 0", fontSize: "14px", color: "#666" }}>
-              Single-fit job builder for 14-up landscape sheets.
+              Prépare les étiquettes par fit pour des feuilles de 14 en format paysage.
             </p>
           </div>
 
-<input
-  type="file"
-  accept="application/pdf"
-  multiple
-  onChange={handlePdfUpload}
-  style={{ marginTop: "10px" }}
-/>
-{importPreview.length > 0 && (
-  <div
-    style={{
-      marginTop: "20px",
-      border: "1px solid #ccc",
-      padding: "10px",
-      borderRadius: "12px",
-      background: "#fafafa",
-    }}
-  >
-    <h3 style={{ margin: "0 0 10px", fontSize: "14px" }}>Import Preview</h3>
+          <input
+            type="file"
+            accept="application/pdf"
+            multiple
+            onChange={handlePdfUpload}
+            style={{ marginTop: "10px" }}
+          />
 
-    {importPreview.map((job) => (
-      <div
-        key={job.id}
-        style={{
-          padding: "8px 0",
-          borderTop: "1px solid #eee",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <strong>{job.fitName}</strong>
+          {importPreview.length > 0 && (
+            <div
+              style={{
+                marginTop: "20px",
+                border: "1px solid #ccc",
+                padding: "10px",
+                borderRadius: "12px",
+                background: "#fafafa",
+              }}
+            >
+              <h3 style={{ margin: "0 0 10px", fontSize: "14px" }}>
+                Aperçu de l’importation
+              </h3>
 
-          <button
-            type="button"
-            onClick={() =>
-              setImportPreview((prev) =>
-                prev.map((item) =>
-                  item.id === job.id
-                    ? { ...item, manualOverride: true }
-                    : item
-                )
-              )
-            }
-            style={{
-              fontSize: "12px",
-              padding: "4px 8px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              background: "#fff",
-              cursor: "pointer",
-            }}
-          >
-            Change
-          </button>
-        </div>
+              {importPreview.map((job) => (
+                <div
+                  key={job.id}
+                  style={{
+                    padding: "8px 0",
+                    borderTop: "1px solid #eee",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <strong>{job.fitName}</strong>
 
-        {(job.fitName === "UNKNOWN" || job.manualOverride) && (
-          <select
-            value={job.fitKey || ""}
-            onChange={(e) => {
-              const selectedFitKey = e.target.value;
-              const selectedFit = allFits[selectedFitKey];
-
-              if (!selectedFit) return;
-
-              setImportPreview((prev) =>
-                prev.map((item) =>
-                  item.id === job.id
-                    ? {
-                        ...item,
-                        fitKey: selectedFitKey,
-                        fitName: selectedFit.name,
-                        desc: selectedFit.desc,
-                        sizes: selectedFit.sizes || NUMERIC_SIZES,
-                        parseError: Object.keys(item.counts).length === 0,
-                        manualOverride: false,
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setImportPreview((prev) =>
+                          prev.map((item) =>
+                            item.id === job.id
+                              ? { ...item, manualOverride: true }
+                              : item
+                          )
+                        )
                       }
-                    : item
-                )
-              );
-            }}
-            style={{
-              marginTop: "6px",
-              width: "100%",
-              padding: "6px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-            }}
-          >
-            <option value="">Choose fit...</option>
-            {fitList.map((fit) => (
-              <option key={fit.key} value={fit.key}>
-                {fit.name}
-              </option>
-            ))}
-          </select>
-        )}
+                      style={{
+                        fontSize: "12px",
+                        padding: "4px 8px",
+                        borderRadius: "6px",
+                        border: "1px solid #ccc",
+                        background: "#fff",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Modifier
+                    </button>
+                  </div>
 
-        {job.parseError ? (
-          <div style={{ color: "#b91c1c", fontSize: "13px", marginTop: "4px" }}>
-            Parsing failed. Please verify this PDF before importing.
-          </div>
-        ) : (
-          <div style={{ marginTop: "4px" }}>
-            {Object.entries(job.counts)
-              .filter(([_, v]) => v > 0)
-              .map(([size, qty]) => `${size}×${qty}`)
-              .join(" • ")}
-          </div>
-        )}
-      </div>
-    ))}
+                  {(job.fitName === "UNKNOWN" || job.manualOverride) && (
+                    <select
+                      value={job.fitKey || ""}
+                      onChange={(e) => {
+                        const selectedFitKey = e.target.value;
+                        const selectedFit = allFits[selectedFitKey];
 
-    <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
-      <button
-        type="button"
-        onClick={() => {
-          const unresolved = importPreview.some((job) => job.fitName === "UNKNOWN");
+                        if (!selectedFit) return;
 
-          if (unresolved) {
-            alert("Please choose a fit for every UNKNOWN item before importing.");
-            return;
-          }
+                        setImportPreview((prev) =>
+                          prev.map((item) =>
+                            item.id === job.id
+                              ? {
+                                  ...item,
+                                  fitKey: selectedFitKey,
+                                  fitName: selectedFit.name,
+                                  desc: selectedFit.desc,
+                                  sizes: selectedFit.sizes || NUMERIC_SIZES,
+                                  parseError: Object.keys(item.counts).length === 0,
+                                  manualOverride: false,
+                                }
+                              : item
+                          )
+                        );
+                      }}
+                      style={{
+                        marginTop: "6px",
+                        width: "100%",
+                        padding: "6px",
+                        borderRadius: "8px",
+                        border: "1px solid #ccc",
+                      }}
+                    >
+                      <option value="">Choisir un fit...</option>
+                      {fitList.map((fit) => (
+                        <option key={fit.key} value={fit.key}>
+                          {fit.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
 
-          setBatchJobs((prev) => prev.concat(importPreview));
-          setImportPreview([]);
-        }}
-      >
-        Confirm Import
-      </button>
+                  {job.parseError ? (
+                    <div style={{ color: "#b91c1c", fontSize: "13px", marginTop: "4px" }}>
+                      Le PDF n’a pas pu être lu correctement. Vérifier avant d’importer.
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: "4px" }}>
+                      {Object.entries(job.counts)
+                        .filter(([_, v]) => v > 0)
+                        .map(([size, qty]) => `${size}×${qty}`)
+                        .join(" • ")}
+                    </div>
+                  )}
+                </div>
+              ))}
 
-      <button
-        type="button"
-        onClick={() => setImportPreview([])}
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
-)}
+              <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const unresolved = importPreview.some((job) => job.fitName === "UNKNOWN");
+
+                    if (unresolved) {
+                      alert("Choisir un fit pour chaque item UNKNOWN avant d’importer.");
+                      return;
+                    }
+
+                    setBatchJobs((prev) => prev.concat(importPreview));
+                    setImportPreview([]);
+                  }}
+                >
+                  Confirmer l’importation
+                </button>
+
+                <button type="button" onClick={() => setImportPreview([])}>
+                  Annuler
+                </button>
+              </div>
+            </div>
+          )}
 
           <div style={{ display: "grid", gap: "16px" }}>
             <div>
@@ -971,7 +977,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                     setFitMenuOpen(true);
                   }}
                   onFocus={() => setFitMenuOpen(true)}
-                  placeholder="Type to search fit..."
+                  placeholder="Chercher un fit..."
                   style={{
                     width: "100%",
                     borderRadius: "12px",
@@ -1035,7 +1041,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                   cursor: "pointer",
                 }}
               >
-                {showNewFitForm ? "Close new fit" : "New fit"}
+                {showNewFitForm ? "Fermer le nouveau fit" : "Nouveau fit"}
               </button>
 
               {showNewFitForm && (
@@ -1052,7 +1058,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                   <input
                     value={newFitName}
                     onChange={(e) => setNewFitName(e.target.value)}
-                    placeholder="Fit name"
+                    placeholder="Nom du fit"
                     style={{
                       width: "100%",
                       borderRadius: "10px",
@@ -1066,7 +1072,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                   <textarea
                     value={newFitDesc}
                     onChange={(e) => setNewFitDesc(e.target.value)}
-                    placeholder={"Description\nEnglish line\nFrench line"}
+                    placeholder={"Description\nLigne anglaise\nLigne française"}
                     rows={4}
                     style={{
                       width: "100%",
@@ -1095,7 +1101,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                         cursor: "pointer",
                       }}
                     >
-                      Save fit
+                      Enregistrer le fit
                     </button>
 
                     <button
@@ -1112,7 +1118,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                         cursor: "pointer",
                       }}
                     >
-                      Cancel
+                      Annuler
                     </button>
                   </div>
                 </div>
@@ -1136,7 +1142,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                   marginBottom: "8px",
                 }}
               >
-                Fit description
+                Description du fit
               </div>
               <div style={{ fontSize: "14px", fontWeight: 600, whiteSpace: "pre-line" }}>
                 {fit.desc}
@@ -1154,7 +1160,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
               }}
             >
               <h2 style={{ margin: 0, fontSize: "14px", fontWeight: 700 }}>
-                Quantities by size
+                Quantités par taille
               </h2>
               <button
                 type="button"
@@ -1167,21 +1173,20 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                   fontSize: "14px",
                 }}
               >
-                Reset
+                Effacer
               </button>
             </div>
 
-
-<div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr 1fr",
-    gap: "8px",
-    maxHeight: "340px",
-    overflowY: "auto",
-    paddingRight: "4px",
-  }}
->
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr",
+                gap: "8px",
+                maxHeight: "340px",
+                overflowY: "auto",
+                paddingRight: "4px",
+              }}
+            >
               {activeSizes.map((size) => (
                 <label
                   key={size}
@@ -1229,49 +1234,49 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
-              <span>Total labels</span>
+              <span>Total d’étiquettes</span>
               <strong>{totalLabels}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
-              <span>Total sheets</span>
+              <span>Total de feuilles</span>
               <strong>{totalSheets || 0}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
-              <span>Labels per sheet</span>
+              <span>Étiquettes par feuille</span>
               <strong>{LABELS_PER_PAGE}</strong>
             </div>
-            
-            {labelsNeededToFillSheet > 0 && (
-  <div
-    style={{
-      marginTop: "10px",
-      paddingTop: "10px",
-      borderTop: "1px solid #e5e5e5",
-      fontSize: "14px",
-    }}
-  >
-    <div style={{ marginBottom: "8px" }}>
-      Add <strong>{labelsNeededToFillSheet}</strong> extra labels to complete the sheet.
-    </div>
 
-    <button
-      type="button"
-      onClick={addExtraLabelsToFillSheet}
-      style={{
-        width: "100%",
-        borderRadius: "10px",
-        background: "#fff",
-        color: "#000",
-        padding: "10px 12px",
-        fontWeight: 600,
-        border: "1px solid #d4d4d4",
-        cursor: "pointer",
-      }}
-    >
-      Add extras automatically
-    </button>
-  </div>
-)}
+            {labelsNeededToFillSheet > 0 && (
+              <div
+                style={{
+                  marginTop: "10px",
+                  paddingTop: "10px",
+                  borderTop: "1px solid #e5e5e5",
+                  fontSize: "14px",
+                }}
+              >
+                <div style={{ marginBottom: "8px" }}>
+                  Ajouter <strong>{labelsNeededToFillSheet}</strong> étiquettes pour compléter la feuille.
+                </div>
+
+                <button
+                  type="button"
+                  onClick={addExtraLabelsToFillSheet}
+                  style={{
+                    width: "100%",
+                    borderRadius: "10px",
+                    background: "#fff",
+                    color: "#000",
+                    padding: "10px 12px",
+                    fontWeight: 600,
+                    border: "1px solid #d4d4d4",
+                    cursor: "pointer",
+                  }}
+                >
+                  Compléter la feuille automatiquement
+                </button>
+              </div>
+            )}
           </div>
 
           <div
@@ -1284,10 +1289,12 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
               gap: "10px",
             }}
           >
-            <div style={{ fontSize: "14px", fontWeight: 700 }}>Batch</div>
+            <div style={{ fontSize: "14px", fontWeight: 700 }}>Liste d’impression</div>
 
             {batchJobs.length === 0 ? (
-              <div style={{ fontSize: "14px", color: "#666" }}>No fits added yet.</div>
+              <div style={{ fontSize: "14px", color: "#666" }}>
+                Aucun fit ajouté pour le moment.
+              </div>
             ) : (
               batchJobs.map((job) => {
                 const jobTotal = (job.sizes || []).reduce(
@@ -1310,10 +1317,17 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: "14px", fontWeight: 600 }}>{job.fitName}</div>
+                      <div style={{ fontSize: "14px", fontWeight: 600 }}>
+                        {job.fitName}
+                        {job.isExtra && (
+                          <span style={{ fontSize: "11px", color: "#999", fontWeight: 400 }}>
+                            {" "}· extra
+                          </span>
+                        )}
+                      </div>
 
                       <div style={{ fontSize: "12px", color: "#666" }}>
-                        {jobTotal} labels
+                        {jobTotal} étiquettes
                       </div>
 
                       <div style={{ fontSize: "12px", color: "#999", marginTop: "4px" }}>
@@ -1335,7 +1349,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                         fontSize: "13px",
                       }}
                     >
-                      Remove
+                      Retirer
                     </button>
                   </div>
                 );
@@ -1358,7 +1372,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                 cursor: "pointer",
               }}
             >
-              Reset all
+              Tout effacer
             </button>
 
             <button
@@ -1375,7 +1389,7 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                 cursor: "pointer",
               }}
             >
-              Add fit to batch
+              Ajouter le fit à la liste
             </button>
 
             <button
@@ -1392,14 +1406,16 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
                 cursor: "pointer",
               }}
             >
-              Print / Save PDF
+              Imprimer / Enregistrer en PDF
             </button>
           </div>
         </aside>
 
         <main style={{ display: "grid", gap: "16px", width: "100%" }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: "16px", fontWeight: 500 }}>Preview</h2>
+            <h2 style={{ margin: 0, fontSize: "16px", fontWeight: 500 }}>
+              Aperçu
+            </h2>
           </div>
 
           <div
