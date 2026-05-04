@@ -169,27 +169,26 @@ async function parsePdf(file) {
 }
 
 function extractFitName(text) {
-  const normalized = text.replace(/\s+/g, " ").trim();
+  const normalized = text.replace(/\s+/g, " ").trim().toUpperCase();
 
   const fitAliases = [
     ["WIDE WILD WEST PANT", "WIDE WILD WEST"],
     ["WIDE WILD WEST", "WIDE WILD WEST"],
-    ["SUPER GUY", "SUPER GUY"],
     ["SUPERGUY", "SUPER GUY"],
-    ["EASY GUY", "EASY GUY"],
+    ["SUPER GUY", "SUPER GUY"],
     ["EASYGUY", "EASY GUY"],
-    ["TRUE GUY", "TRUE GUY"],
+    ["EASY GUY", "EASY GUY"],
     ["TRUEGUY", "TRUE GUY"],
-    ["GROOVY GUY", "GROOVY GUY"],
+    ["TRUE GUY", "TRUE GUY"],
     ["GROOVYGUY", "GROOVY GUY"],
+    ["GROOVY GUY", "GROOVY GUY"],
     ["BESTIE", "BESTIE"],
     ["CHORE COAT", "CHORE COAT"],
     ["DENIM JACKET", "DENIM JACKET"],
   ];
 
   for (const [needle, fitName] of fitAliases) {
-    const regex = new RegExp(`\\b\\d{9}\\s+${needle}\\b`, "i");
-    if (regex.test(normalized)) {
+    if (normalized.includes(needle)) {
       return fitName;
     }
   }
