@@ -682,6 +682,57 @@ function handleSizeInputKeyDown(e) {
     setBatchJobs((prev) => prev.filter((job) => job.id !== jobId));
   }
 
+function addExtraLabelsToFillSheet() {
+  if (labelsNeededToFillSheet === 0 || batchJobs.length === 0) return;
+
+  const ranked = [];
+
+  for (const job of batchJobs) {
+    for (const size of job.sizes || []) {
+      const qty = job.counts[size] || 0;
+      if (qty <= 0) continue;
+
+      ranked.push({
+        job,
+        size,
+        qty,
+      });
+    }
+  }
+
+  ranked.sort((a, b) => b.qty - a.qty);
+
+  if (ranked.length === 0) return;
+
+  const extrasByJob = {};
+
+  for (let i = 0; i < labelsNeededToFillSheet; i += 1) {
+    const pick = ranked[i % ranked.length];
+    const jobId = pick.job.id;
+
+    if (!extrasByJob[jobId]) {
+      extrasByJob[jobId] = {
+        baseJob: pick.job,
+        counts: {},
+      };
+    }
+
+    extrasByJob[jobId].counts[pick.size] =
+      (extrasByJob[jobId].counts[pick.size] || 0) + 1;
+  }
+
+  const extraJobs = Object.values(extrasByJob).map((group) => ({
+    id: `extras-${group.baseJob.id}-${Date.now()}`,
+    fitKey: group.baseJob.fitKey,
+    fitName: `${group.baseJob.fitName} - EXTRA`,
+    desc: group.baseJob.desc,
+    counts: group.counts,
+    sizes: group.baseJob.sizes,
+  }));
+
+  setBatchJobs((prev) => [...prev, ...extraJobs]);
+}
+
   const batchQueue = useMemo(() => {
 return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
   }, [batchJobs]);
@@ -689,6 +740,10 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
   const pages = useMemo(() => chunk(batchQueue, LABELS_PER_PAGE), [batchQueue]);
   const totalLabels = batchQueue.length;
   const totalSheets = Math.ceil(totalLabels / LABELS_PER_PAGE);
+  const labelsNeededToFillSheet =
+  totalLabels % LABELS_PER_PAGE === 0
+    ? 0
+    : LABELS_PER_PAGE - (totalLabels % LABELS_PER_PAGE);
 
   return (
     <div
@@ -757,6 +812,45 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
         }}
       >
         <strong>{job.fitName}</strong>
+        {job.fitName === "UNKNOWN" && (
+  <select
+    value=""
+    onChange={(e) => {
+      const selectedFitKey = e.target.value;
+      const selectedFit = allFits[selectedFitKey];
+
+      setImportPreview((prev) =>
+        prev.map((item) =>
+          item.id === job.id
+            ? {
+                ...item,
+                fitKey: selectedFitKey,
+                fitName: selectedFit.name,
+                desc: selectedFit.desc,
+                sizes: selectedFit.sizes || NUMERIC_SIZES,
+                parseError: Object.keys(item.counts).length === 0,
+              }
+            : item
+        )
+      );
+    }}
+    style={{
+      marginTop: "6px",
+      width: "100%",
+      padding: "6px",
+      borderRadius: "8px",
+      border: "1px solid #ccc",
+    }}
+  >
+    <option value="">Choose fit...</option>
+    {fitList.map((fit) => (
+      <option key={fit.key} value={fit.key}>
+        {fit.name}
+      </option>
+    ))}
+  </select>
+)}
+      
 
         {job.parseError ? (
           <div style={{ color: "#b91c1c", fontSize: "13px", marginTop: "4px" }}>
@@ -1090,6 +1184,38 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
               <span>Labels per sheet</span>
               <strong>{LABELS_PER_PAGE}</strong>
             </div>
+            
+            {labelsNeededToFillSheet > 0 && (
+  <div
+    style={{
+      marginTop: "10px",
+      paddingTop: "10px",
+      borderTop: "1px solid #e5e5e5",
+      fontSize: "14px",
+    }}
+  >
+    <div style={{ marginBottom: "8px" }}>
+      Add <strong>{labelsNeededToFillSheet}</strong> extra labels to complete the sheet.
+    </div>
+
+    <button
+      type="button"
+      onClick={addExtraLabelsToFillSheet}
+      style={{
+        width: "100%",
+        borderRadius: "10px",
+        background: "#fff",
+        color: "#000",
+        padding: "10px 12px",
+        fontWeight: 600,
+        border: "1px solid #d4d4d4",
+        cursor: "pointer",
+      }}
+    >
+      Add extras automatically
+    </button>
+  </div>
+)}
           </div>
 
           <div
