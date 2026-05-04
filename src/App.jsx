@@ -551,8 +551,12 @@ export default function App() {
     return { ...FITS, ...customFits };
   }, [customFits]);
 
-  const fitList = Object.values(allFits);
-
+const fitList = useMemo(() => {
+  return Object.values(allFits).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+}, [allFits]);
+  
   const filteredFits = fitList.filter((f) =>
     f.name.toLowerCase().includes(fitQuery.toLowerCase())
   );
@@ -805,14 +809,30 @@ export default function App() {
             </p>
           </div>
 
-          <input
-            type="file"
-            accept="application/pdf"
-            multiple
-            onChange={handlePdfUpload}
-            style={{ marginTop: "10px" }}
-          />
+         <label
+  htmlFor="pdf-upload"
+  style={{
+    display: "inline-block",
+    marginTop: "10px",
+    padding: "10px 12px",
+    borderRadius: "10px",
+    border: "1px solid #d4d4d4",
+    background: "#fff",
+    cursor: "pointer",
+    fontWeight: 600,
+  }}
+>
+  Choisir les fichiers PDF
+</label>
 
+<input
+  id="pdf-upload"
+  type="file"
+  accept="application/pdf"
+  multiple
+  onChange={handlePdfUpload}
+  style={{ display: "none" }}
+/>
           {importPreview.length > 0 && (
             <div
               style={{
