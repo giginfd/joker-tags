@@ -807,7 +807,6 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
   onChange={handlePdfUpload}
   style={{ marginTop: "10px" }}
 />
-
 {importPreview.length > 0 && (
   <div
     style={{
@@ -820,74 +819,82 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
   >
     <h3 style={{ margin: "0 0 10px", fontSize: "14px" }}>Import Preview</h3>
 
-  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-  <strong>{job.fitName}</strong>
+    {importPreview.map((job) => (
+      <div
+        key={job.id}
+        style={{
+          padding: "8px 0",
+          borderTop: "1px solid #eee",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <strong>{job.fitName}</strong>
 
-  <button
-    type="button"
-    onClick={() =>
-      setImportPreview((prev) =>
-        prev.map((item) =>
-          item.id === job.id
-            ? { ...item, manualOverride: true }
-            : item
-        )
-      )
-    }
-    style={{
-      fontSize: "12px",
-      padding: "4px 8px",
-      borderRadius: "6px",
-      border: "1px solid #ccc",
-      background: "#fff",
-      cursor: "pointer",
-    }}
-  >
-    Change
-  </button>
-</div>
+          <button
+            type="button"
+            onClick={() =>
+              setImportPreview((prev) =>
+                prev.map((item) =>
+                  item.id === job.id
+                    ? { ...item, manualOverride: true }
+                    : item
+                )
+              )
+            }
+            style={{
+              fontSize: "12px",
+              padding: "4px 8px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              background: "#fff",
+              cursor: "pointer",
+            }}
+          >
+            Change
+          </button>
+        </div>
 
-{(job.fitName === "UNKNOWN" || job.manualOverride) && (
-  <select
-    value={job.fitKey || ""}
-    onChange={(e) => {
-      const selectedFitKey = e.target.value;
-      const selectedFit = allFits[selectedFitKey];
+        {(job.fitName === "UNKNOWN" || job.manualOverride) && (
+          <select
+            value={job.fitKey || ""}
+            onChange={(e) => {
+              const selectedFitKey = e.target.value;
+              const selectedFit = allFits[selectedFitKey];
 
-      if (!selectedFit) return;
+              if (!selectedFit) return;
 
-      setImportPreview((prev) =>
-        prev.map((item) =>
-          item.id === job.id
-            ? {
-                ...item,
-                fitKey: selectedFitKey,
-                fitName: selectedFit.name,
-                desc: selectedFit.desc,
-                sizes: selectedFit.sizes || NUMERIC_SIZES,
-                parseError: Object.keys(item.counts).length === 0,
-                manualOverride: false,
-              }
-            : item
-        )
-      );
-    }}
-    style={{
-      marginTop: "6px",
-      width: "100%",
-      padding: "6px",
-      borderRadius: "8px",
-      border: "1px solid #ccc",
-    }}
-  >
-    <option value="">Choose fit...</option>
-    {fitList.map((fit) => (
-      <option key={fit.key} value={fit.key}>
-        {fit.name}
-      </option>
-    ))}
-  </select>
-)}
+              setImportPreview((prev) =>
+                prev.map((item) =>
+                  item.id === job.id
+                    ? {
+                        ...item,
+                        fitKey: selectedFitKey,
+                        fitName: selectedFit.name,
+                        desc: selectedFit.desc,
+                        sizes: selectedFit.sizes || NUMERIC_SIZES,
+                        parseError: Object.keys(item.counts).length === 0,
+                        manualOverride: false,
+                      }
+                    : item
+                )
+              );
+            }}
+            style={{
+              marginTop: "6px",
+              width: "100%",
+              padding: "6px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+            }}
+          >
+            <option value="">Choose fit...</option>
+            {fitList.map((fit) => (
+              <option key={fit.key} value={fit.key}>
+                {fit.name}
+              </option>
+            ))}
+          </select>
+        )}
 
         {job.parseError ? (
           <div style={{ color: "#b91c1c", fontSize: "13px", marginTop: "4px" }}>
@@ -910,13 +917,13 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
         onClick={() => {
           const unresolved = importPreview.some((job) => job.fitName === "UNKNOWN");
 
-if (unresolved) {
-  alert("Please choose a fit for every UNKNOWN item before importing.");
-  return;
-}
+          if (unresolved) {
+            alert("Please choose a fit for every UNKNOWN item before importing.");
+            return;
+          }
 
-setBatchJobs((prev) => prev.concat(importPreview));
-setImportPreview([]);
+          setBatchJobs((prev) => prev.concat(importPreview));
+          setImportPreview([]);
         }}
       >
         Confirm Import
