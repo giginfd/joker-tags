@@ -582,7 +582,7 @@ function addCurrentFitToBatch() {
     sizes: [...activeSizes],
   };
 
-  setBatchJobs((prev) => [...prev, nextJob]);
+setBatchJobs((prev) => prev.concat(nextJob));
   resetCounts();
 }
 
@@ -730,7 +730,7 @@ function addExtraLabelsToFillSheet() {
     sizes: group.baseJob.sizes,
   }));
 
-  setBatchJobs((prev) => [...prev, ...extraJobs]);
+setBatchJobs((prev) => prev.concat(extraJobs));
 }
 
   const batchQueue = useMemo(() => {
@@ -871,8 +871,15 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
       <button
         type="button"
         onClick={() => {
-          setBatchJobs((prev) => [...prev, ...importPreview]);
-          setImportPreview([]);
+          const unresolved = importPreview.some((job) => job.fitName === "UNKNOWN");
+
+if (unresolved) {
+  alert("Please choose a fit for every UNKNOWN item before importing.");
+  return;
+}
+
+setBatchJobs((prev) => prev.concat(importPreview));
+setImportPreview([]);
         }}
       >
         Confirm Import
