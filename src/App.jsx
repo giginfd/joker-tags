@@ -820,37 +820,57 @@ return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
   >
     <h3 style={{ margin: "0 0 10px", fontSize: "14px" }}>Import Preview</h3>
 
-    {importPreview.map((job) => (
-      <div
-        key={job.id}
-        style={{
-          padding: "8px 0",
-          borderTop: "1px solid #eee",
-        }}
-      >
-        <strong>{job.fitName}</strong>
-        {job.fitName === "UNKNOWN" && (
-  <select
-    value=""
-    onChange={(e) => {
-      const selectedFitKey = e.target.value;
-      const selectedFit = allFits[selectedFitKey];
+   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+  <strong>{job.fitName}</strong>
 
+  <button
+    type="button"
+    onClick={() =>
       setImportPreview((prev) =>
         prev.map((item) =>
           item.id === job.id
-            ? {
-                ...item,
-                fitKey: selectedFitKey,
-                fitName: selectedFit.name,
-                desc: selectedFit.desc,
-                sizes: selectedFit.sizes || NUMERIC_SIZES,
-                parseError: Object.keys(item.counts).length === 0,
-              }
+            ? { ...item, manualOverride: true }
             : item
         )
-      );
+      )
+    }
+    style={{
+      fontSize: "12px",
+      padding: "4px 8px",
+      borderRadius: "6px",
+      border: "1px solid #ccc",
+      background: "#fff",
+      cursor: "pointer",
     }}
+  >
+    Change
+  </button>
+</div>
+{(job.fitName === "UNKNOWN" || job.manualOverride) && (
+  <select
+    value={job.fitKey || ""}
+   onChange={(e) => {
+  const selectedFitKey = e.target.value;
+  const selectedFit = allFits[selectedFitKey];
+
+  if (!selectedFit) return;
+
+  setImportPreview((prev) =>
+    prev.map((item) =>
+      item.id === job.id
+        ? {
+            ...item,
+            fitKey: selectedFitKey,
+            fitName: selectedFit.name,
+            desc: selectedFit.desc,
+            sizes: selectedFit.sizes || NUMERIC_SIZES,
+            parseError: Object.keys(item.counts).length === 0,
+            manualOverride: false,
+          }
+        : item
+    )
+  );
+}}
     style={{
       marginTop: "6px",
       width: "100%",
