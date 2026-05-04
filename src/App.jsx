@@ -794,9 +794,10 @@ gridTemplateColumns: isWideScreen ? "minmax(360px, 480px) 1fr" : "1fr",
             borderRadius: "16px",
             border: "1px solid #e5e5e5",
             padding: "20px",
-            height: "fit-content",
-            position: isWideScreen ? "sticky" : "static",
-            top: "24px",
+            height: isWideScreen ? "calc(100vh - 48px)" : "auto",
+position: isWideScreen ? "sticky" : "static",
+top: "24px",
+overflowY: "auto",
           }}
         >
           <div style={{ marginBottom: "20px" }}>
