@@ -784,8 +784,7 @@ const fitList = useMemo(() => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: isWideScreen ? "340px 1fr" : "1fr",
-          gap: "24px",
+gridTemplateColumns: isWideScreen ? "minmax(360px, 480px) 1fr" : "1fr",
           width: "100%",
         }}
       >
