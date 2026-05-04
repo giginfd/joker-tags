@@ -219,11 +219,16 @@ function extractOrderData(text) {
 
   const counts = {};
 
-  sizeTokens.forEach((size, i) => {
-    const numericSize = Number(size);
-    const parsedSize = Number.isNaN(numericSize) ? size.toUpperCase() : numericSize;
-    counts[parsedSize] = qtyTokens[i] || 0;
-  });
+  const paddedQtyTokens =
+  qtyTokens.length < sizeTokens.length
+    ? Array(sizeTokens.length - qtyTokens.length).fill(0).concat(qtyTokens)
+    : qtyTokens;
+
+sizeTokens.forEach((size, i) => {
+  const numericSize = Number(size);
+  const parsedSize = Number.isNaN(numericSize) ? size.toUpperCase() : numericSize;
+  counts[parsedSize] = paddedQtyTokens[i] || 0;
+});
 
   return { fitName, counts };
 }
