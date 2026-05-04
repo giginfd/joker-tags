@@ -743,13 +743,14 @@ function addExtraLabelsToFillSheet() {
   }
 
   const extraJobs = Object.values(extrasByJob).map((group) => ({
-    id: `extras-${group.baseJob.id}-${Date.now()}`,
-    fitKey: group.baseJob.fitKey,
-    fitName: `${group.baseJob.fitName} - EXTRA`,
-    desc: group.baseJob.desc,
-    counts: group.counts,
-    sizes: group.baseJob.sizes,
-  }));
+  id: `extras-${group.baseJob.id}-${Date.now()}`,
+  fitKey: group.baseJob.fitKey,
+  fitName: group.baseJob.fitName, // clean
+  desc: group.baseJob.desc,
+  counts: group.counts,
+  sizes: group.baseJob.sizes,
+  isExtra: true, // internal use only
+}));
 
 setBatchJobs((prev) => prev.concat(extraJobs));
 }
