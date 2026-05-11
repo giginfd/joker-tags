@@ -85,6 +85,12 @@ const FITS = {
     desc: "Relaxed straight.\nFit droit décontracté.",
     sizes: NUMERIC_SIZES,
   },
+    maudie_flared: {
+    key: "strong_guy",
+    name: "STRONG GUY",
+    desc: "Mid rise, flared leg.\nMi-taille, jambe légèrement évasée",
+    sizes: NUMERIC_SIZES,
+  },
 };
 
 const LABELS_PER_PAGE = PAGE.cols * PAGE.rows;
@@ -202,6 +208,8 @@ function extractFitName(text) {
     ["BESTIE", "BESTIE"],
     ["CHORE COAT", "CHORE COAT"],
     ["DENIM JACKET", "DENIM JACKET"],
+    ["MAUDIE FLARED", "MAUDIE FLARED"],
+    ["MAUDIEFLARED", "MAUDIE FLARED"],
   ];
 
   for (const [needle, fitName] of fitAliases) {
@@ -548,9 +556,9 @@ export default function App() {
     localStorage.setItem(CUSTOM_FITS_STORAGE_KEY, JSON.stringify(customFits));
   }, [customFits]);
 
-  const allFits = useMemo(() => {
-    return { ...FITS, ...customFits };
-  }, [customFits]);
+const allFits = useMemo(() => {
+  return Object.assign({}, customFits, FITS);
+}, [customFits]);
 
 const fitList = useMemo(() => {
   return Object.values(allFits).sort((a, b) =>
