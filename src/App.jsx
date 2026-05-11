@@ -187,6 +187,12 @@ async function parsePdf(file) {
   return fullText;
 }
 
+function normalizeFitText(value) {
+  return String(value || "")
+    .replace(/\s+/g, "")
+    .toUpperCase();
+}
+
 function extractFitName(text) {
   const normalized = text.replace(/\s+/g, " ").trim().toUpperCase();
 
@@ -217,7 +223,16 @@ function extractFitName(text) {
       return fitName;
     }
   }
+const allKnownFits = Object.values(FITS);
+const compactText = normalizeFitText(normalized);
 
+for (const fit of allKnownFits) {
+  const compactFitName = normalizeFitText(fit.name);
+
+  if (compactText.includes(compactFitName)) {
+    return fit.name;
+  }
+}
   return "UNKNOWN";
 }
 
