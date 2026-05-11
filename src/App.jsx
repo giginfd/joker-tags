@@ -728,6 +728,29 @@ const fitList = useMemo(() => {
     setNewFitName("");
     setNewFitDesc("");
     setNewFitSizeType("numeric");
+    const emailBody = [
+  "New fit created in Joker Tags:",
+  "",
+  `Name: ${nextFit.name}`,
+  `Size type: ${newFitSizeType === "letter" ? "Letter sizes XXS–XXL" : "Jeans sizes 23–44"}`,
+  "",
+  "Description:",
+  nextFit.desc,
+  "",
+  "Code to add to App.jsx:",
+  "",
+  `${key}: {`,
+  `  key: "${key}",`,
+  `  name: "${nextFit.name}",`,
+  `  desc: ${JSON.stringify(nextFit.desc)},`,
+  `  sizes: ${newFitSizeType === "letter" ? "LETTER_SIZES" : "NUMERIC_SIZES"},`,
+  `},`,
+].join("\n");
+
+window.location.href =
+  `mailto:gigi@nakedandfamousdenim.com?subject=${encodeURIComponent(
+    `New Joker Tags fit: ${nextFit.name}`
+  )}&body=${encodeURIComponent(emailBody)}`;
   }
 
   function cancelNewFit() {
