@@ -35,7 +35,7 @@ const FITS = {
     key: "chore_coat",
     name: "CHORE COAT",
     desc: "Classic workwear coat.\nVeste de travail classique.",
-    sizes: NUMERIC_SIZES,
+    sizes: LETTER_SIZES,
   },
   denim_jacket: {
     key: "denim_jacket",
@@ -1115,20 +1115,11 @@ overflowY: "auto",
   <option value="numeric">Jeans sizes: 23–44</option>
   <option value="letter">Letter sizes: XXS–XXL</option>
 </select>
-                  <input ... />
-
-<select ...>
-  <option value="numeric">Jeans sizes: 23–44</option>
-  <option value="letter">Letter sizes: XXS–XXL</option>
-</select>
-
-<div style={{ fontSize: "12px", color: "#666", lineHeight: 1.35 }}>
+                  <div style={{ fontSize: "12px", color: "#666", lineHeight: 1.35 }}>
   Choisir <strong>Jeans sizes</strong> pour les pantalons/jeans.
   <br />
   Choisir <strong>Letter sizes</strong> pour les vestes, chemises et hauts.
 </div>
-
-<textarea ... />
                   
                   <textarea
                     value={newFitDesc}
