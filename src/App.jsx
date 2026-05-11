@@ -35,7 +35,7 @@ const FITS = {
     key: "chore_coat",
     name: "CHORE COAT",
     desc: "Classic workwear coat.\nVeste de travail classique.",
-    sizes: LETTER_SIZES,
+    sizes: newFitSizeType === "letter" ? LETTER_SIZES : NUMERIC_SIZES,
   },
   denim_jacket: {
     key: "denim_jacket",
@@ -510,6 +510,7 @@ export default function App() {
   const [showNewFitForm, setShowNewFitForm] = useState(false);
   const [newFitName, setNewFitName] = useState("");
   const [newFitDesc, setNewFitDesc] = useState("");
+  const [newFitSizeType, setNewFitSizeType] = useState("numeric");
   const [customFits, setCustomFits] = useState({});
 
   const [isWideScreen, setIsWideScreen] = useState(false);
@@ -700,12 +701,14 @@ const fitList = useMemo(() => {
     setShowNewFitForm(false);
     setNewFitName("");
     setNewFitDesc("");
+    setNewFitSizeType("numeric");
   }
 
   function cancelNewFit() {
     setShowNewFitForm(false);
     setNewFitName("");
     setNewFitDesc("");
+    setNewFitSizeType("numeric");
   }
 
   function removeBatchJob(jobId) {
@@ -1094,6 +1097,36 @@ overflowY: "auto",
                     }}
                   />
 
+                  <select
+  value={newFitSizeType}
+  onChange={(e) => setNewFitSizeType(e.target.value)}
+  style={{
+    width: "100%",
+    borderRadius: "10px",
+    border: "1px solid #d4d4d4",
+    padding: "10px 12px",
+    background: "#fff",
+    boxSizing: "border-box",
+  }}
+>
+  <option value="numeric">Jeans sizes: 23–44</option>
+  <option value="letter">Letter sizes: XXS–XXL</option>
+</select>
+                  <input ... />
+
+<select ...>
+  <option value="numeric">Jeans sizes: 23–44</option>
+  <option value="letter">Letter sizes: XXS–XXL</option>
+</select>
+
+<div style={{ fontSize: "12px", color: "#666", lineHeight: 1.35 }}>
+  Choisir <strong>Jeans sizes</strong> pour les pantalons/jeans.
+  <br />
+  Choisir <strong>Letter sizes</strong> pour les vestes, chemises et hauts.
+</div>
+
+<textarea ... />
+                  
                   <textarea
                     value={newFitDesc}
                     onChange={(e) => setNewFitDesc(e.target.value)}
