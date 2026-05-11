@@ -86,7 +86,7 @@ const FITS = {
     sizes: NUMERIC_SIZES,
   },
     maudie_flared: {
-    key: "strong_guy",
+    key: "maudie_flared",
     name: "MAUDIE FLARED",
     desc: "Mid rise, flared leg.\nMi-taille, jambe légèrement évasée",
     sizes: NUMERIC_SIZES,
