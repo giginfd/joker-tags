@@ -35,7 +35,7 @@ const FITS = {
     key: "chore_coat",
     name: "CHORE COAT",
     desc: "Classic workwear coat.\nVeste de travail classique.",
-    sizes: newFitSizeType === "letter" ? LETTER_SIZES : NUMERIC_SIZES,
+    sizes: NUMERIC_SIZES,
   },
   denim_jacket: {
     key: "denim_jacket",
@@ -688,7 +688,10 @@ const fitList = useMemo(() => {
       key,
       name: trimmedName.toUpperCase(),
       desc: trimmedDesc,
-      sizes: LETTER_SIZES,
+      sizes:
+        newFitSizeType === "letter"
+      ? LETTER_SIZES
+      : NUMERIC_SIZES,
     };
 
     setCustomFits((prev) => ({
