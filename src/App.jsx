@@ -260,9 +260,11 @@ function extractOrderData(text) {
   const counts = {};
 
   const paddedQtyTokens =
-    qtyTokens.length < sizeTokens.length
-      ? Array(sizeTokens.length - qtyTokens.length).fill(0).concat(qtyTokens)
-      : qtyTokens;
+  qtyTokens.length < sizeTokens.length
+    ? qtyTokens.concat(
+        Array(sizeTokens.length - qtyTokens.length).fill(0)
+      )
+    : qtyTokens;
 
   sizeTokens.forEach((size, i) => {
     const numericSize = Number(size);
