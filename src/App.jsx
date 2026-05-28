@@ -351,7 +351,18 @@ function ensurePrintStyles() {
 
 function Label({ fitName, desc, size }) {
   const descLines = wrapText(desc, 30);
-  const isLongFit = fitName.length > 12;
+  const fitNameLength = fitName.length;
+
+const topFitFontSize =
+  fitNameLength > 18 ? "6.2" :
+  fitNameLength > 14 ? "7" :
+  fitNameLength > 12 ? "7.5" :
+  "9";
+
+const bottomFitFontSize =
+  fitNameLength > 18 ? "6.5" :
+  fitNameLength > 14 ? "7.2" :
+  "8.3";
 
   return (
     <div
@@ -386,7 +397,7 @@ function Label({ fitName, desc, size }) {
           y="135"
           fill="#000"
           fontFamily="Arial, Helvetica, sans-serif"
-          fontSize={isLongFit ? "7.5" : "9"}
+          fontSize={topFitFontSize}
           fontWeight="600"
           textAnchor="middle"
           dominantBaseline="middle"
@@ -445,7 +456,7 @@ function Label({ fitName, desc, size }) {
             y="241.5"
             fill="#000"
             fontFamily="Arial, Helvetica, sans-serif"
-            fontSize="8.3"
+            fontSize={bottomFitFontSize}
             fontWeight="600"
             textAnchor="start"
             dominantBaseline="middle"
