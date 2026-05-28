@@ -61,6 +61,24 @@ const FITS = {
     desc: "Straight leg, regular rise.\nJambe droite, taille régulière.",
     sizes: NUMERIC_SIZES,
   },
+   true_girl: {
+    key: "true_girl",
+    name: "TRUE GIRL",
+    desc: "High rise, straight leg.\nTaille haute, jambe droite.",
+    sizes: NUMERIC_SIZES,
+  },
+  pleated_trouser: {
+    key: "pleated_trouser",
+    name: "PLEATED TROUSER",
+    desc: "Mid-rise with front pleats.\nMi-taille avec plis à l'avant.",
+    sizes: NUMERIC_SIZES,
+  },
+   strong_girl: {
+    key: "strong_girl",
+    name: "STRONG GIRL",
+    desc: "Mid-rise, wide straight leg.\nMi-taille, jambe droite ample.",
+    sizes: NUMERIC_SIZES,
+  },
   super_guy: {
     key: "super_guy",
     name: "SUPER GUY",
@@ -82,7 +100,7 @@ const FITS = {
   strong_guy: {
     key: "strong_guy",
     name: "STRONG GUY",
-    desc: "Relaxed straight.\nFit droit décontracté.",
+    desc: "Wide fit, straight leg.\nCoupe ample, jambe droite.",
     sizes: NUMERIC_SIZES,
   },
     maudie_flared: {
@@ -205,7 +223,13 @@ function extractFitName(text) {
     ["EASY GUY", "EASY GUY"],
     ["TRUEGUY", "TRUE GUY"],
     ["TRUE GUY", "TRUE GUY"],
+    ["TRUEGIRL", "TRUE GIRL"],
+    ["TRUE GIRL", "TRUE GIRL"],
+    ["PLEATED TROUSER", "PLEATED TROUSER"],
+    ["PLEATEDTROUSER", "PLEATED TROUSER"],
     ["GROOVYGUY", "GROOVY GUY"],
+    ["STRONG GIRL", "STRONG GIRL"],
+    ["STRONGGIRL", "STRONG GIRL"],
     ["GROOVY GUY", "GROOVY GUY"],
     ["WEIRDGUY", "WEIRD GUY"],
     ["WEIRD GUY", "WEIRD GUY"],
