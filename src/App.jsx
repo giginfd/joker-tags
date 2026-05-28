@@ -76,7 +76,7 @@ const FITS = {
    strong_girl: {
     key: "strong_girl",
     name: "STRONG GIRL",
-    desc: "Mid-rise, wide straight leg.\nMi-taille, jambe droite ample.",
+    desc: "Mid-rise, wide straight leg.\nMi-taille, jambe droite\n ample.",
     sizes: NUMERIC_SIZES,
   },
   super_guy: {
