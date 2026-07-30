@@ -109,6 +109,12 @@ const FITS = {
   desc: "Straight leg, high rise.\nJambe droite, taille haute.",
   sizes: NUMERIC_SIZES,
 },
+  other_guy: {
+  key: "other_guy",
+  name: "OTHER GUY",
+  desc: "Mid-rise, barrel leg.\nMi-taille, jambe baril.",
+  sizes: NUMERIC_SIZES,
+},
     maudie_flared: {
     key: "maudie_flared",
     name: "MAUDIE FLARED",
@@ -246,6 +252,10 @@ function extractFitName(text) {
     ["DENIM JACKET", "DENIM JACKET"],
     ["MAUDIE FLARED", "MAUDIE FLARED"],
     ["MAUDIEFLARED", "MAUDIE FLARED"],
+    ["UTILITY PANT", "UTILITY PANT"],
+    ["UTILITYPANT", "UTILITY PANT"],
+    ["OTHER GUY", "OTHER GUY"],
+    ["OTHERGUY", "OTHER GUY"],
   ];
 
   for (const [needle, fitName] of fitAliases) {
