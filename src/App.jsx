@@ -103,6 +103,12 @@ const FITS = {
     desc: "Wide fit, straight leg.\nCoupe ample, jambe droite.",
     sizes: NUMERIC_SIZES,
   },
+  utility_pant: {
+  key: "utility_pant",
+  name: "UTILITY PANT",
+  desc: "Straight leg, high rise.\nJambe droite, taille haute.",
+  sizes: NUMERIC_SIZES,
+},
     maudie_flared: {
     key: "maudie_flared",
     name: "MAUDIE FLARED",
