@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import logoUrl from "./assets/logo.svg";
 import * as pdfjsLib from "pdfjs-dist";
+import {
+  parseStornowayFragment,
+  readImportedLineIds,
+  rememberImportedLineIds,
+  STORNOWAY_PORTAL_URL,
+} from "./stornoway-import.js";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -159,6 +165,21 @@ function chunk(items, size) {
   return chunks;
 }
 
+function mergeSizeOrder(preferredSizes, importedSizes) {
+  const merged = [...(preferredSizes || [])];
+  const known = new Set(merged.map((size) => String(size).toUpperCase()));
+
+  for (const size of importedSizes || []) {
+    const normalized = String(size).toUpperCase();
+    if (!known.has(normalized)) {
+      known.add(normalized);
+      merged.push(size);
+    }
+  }
+
+  return merged;
+}
+
 function labelSlotStyle(index) {
   const col = index % PAGE.cols;
   const row = Math.floor(index / PAGE.cols);
@@ -313,6 +334,86 @@ function extractOrderData(text) {
   });
 
   return { fitName, counts };
+}
+
+function loadCustomFits() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(CUSTOM_FITS_STORAGE_KEY) || "{}");
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch (error) {
+    console.error("Erreur lors du chargement des fits personnalisés", error);
+    return {};
+  }
+}
+
+function buildStornowayJob(payload, availableFits) {
+  const resolvedFitKey = findFitKeyFromName(payload.fitName);
+  const matchedFit = availableFits[resolvedFitKey];
+
+  return {
+    id: `stornoway-${payload.lineId}`,
+    fitKey: matchedFit ? resolvedFitKey : "",
+    fitName: matchedFit ? matchedFit.name : "UNKNOWN",
+    incomingFitName: payload.fitName,
+    desc: matchedFit ? matchedFit.desc : "",
+    counts: payload.counts,
+    sizes: mergeSizeOrder(matchedFit ? matchedFit.sizes : [], payload.orderedSizes),
+    importedSizes: payload.orderedSizes,
+    sourceLineId: payload.lineId,
+    requestNumber: payload.requestNumber,
+    lotNumber: payload.lotNumber,
+    parseError: false,
+  };
+}
+
+function createInitialStornowayImport(customFits) {
+  const result = parseStornowayFragment(window.location.hash);
+  if (!result.found) {
+    return { found: false, preview: [], notice: null };
+  }
+
+  if (result.error) {
+    return {
+      found: true,
+      preview: [],
+      notice: { kind: "error", text: result.error },
+    };
+  }
+
+  if (readImportedLineIds(window.sessionStorage).includes(result.payload.lineId)) {
+    return {
+      found: true,
+      preview: [],
+      notice: {
+        kind: "info",
+        text: `La demande ${result.payload.requestNumber} a déjà été ajoutée pendant cette session.`,
+      },
+    };
+  }
+
+  return {
+    found: true,
+    preview: [buildStornowayJob(result.payload, Object.assign({}, customFits, FITS))],
+    notice: {
+      kind: "success",
+      text: `Demande ${result.payload.requestNumber} prête à vérifier avant l’ajout.`,
+    },
+  };
+}
+
+function buildJobQueue(job) {
+  const queue = [];
+  for (const size of job.sizes || []) {
+    const count = job.counts[size] || 0;
+    for (let i = 0; i < count; i += 1) {
+      queue.push({
+        fitName: job.fitName,
+        desc: job.desc,
+        size,
+      });
+    }
+  }
+  return queue;
 }
 
 function printDocument() {
@@ -580,20 +681,33 @@ export default function App() {
   const [fitQuery, setFitQuery] = useState("");
   const [fitMenuOpen, setFitMenuOpen] = useState(false);
 
+  const [customFits, setCustomFits] = useState(loadCustomFits);
+  const [initialStornowayImport] = useState(() => createInitialStornowayImport(customFits));
   const [batchJobs, setBatchJobs] = useState([]);
-  const [importPreview, setImportPreview] = useState([]);
+  const [importPreview, setImportPreview] = useState(initialStornowayImport.preview);
+  const [stornowayImportNotice, setStornowayImportNotice] = useState(
+    initialStornowayImport.notice
+  );
 
   const [showNewFitForm, setShowNewFitForm] = useState(false);
   const [newFitName, setNewFitName] = useState("");
   const [newFitDesc, setNewFitDesc] = useState("");
   const [newFitSizeType, setNewFitSizeType] = useState("numeric");
-  const [customFits, setCustomFits] = useState({});
-
   const [isWideScreen, setIsWideScreen] = useState(false);
 
   useEffect(() => {
     ensurePrintStyles();
   }, []);
+
+  useEffect(() => {
+    if (!initialStornowayImport.found) return;
+
+    window.history.replaceState(
+      null,
+      document.title,
+      `${window.location.pathname}${window.location.search}`
+    );
+  }, [initialStornowayImport.found]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -604,20 +718,6 @@ export default function App() {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem(CUSTOM_FITS_STORAGE_KEY);
-    if (!saved) return;
-
-    try {
-      const parsed = JSON.parse(saved);
-      if (parsed && typeof parsed === "object") {
-        setCustomFits(parsed);
-      }
-    } catch (error) {
-      console.error("Erreur lors du chargement des fits personnalisés", error);
-    }
   }, []);
 
   useEffect(() => {
@@ -633,7 +733,48 @@ const fitList = useMemo(() => {
     a.name.localeCompare(b.name)
   );
 }, [allFits]);
-  
+
+  useEffect(() => {
+    function handleStornowayHashChange() {
+      const result = parseStornowayFragment(window.location.hash);
+      if (!result.found) return;
+
+      window.history.replaceState(
+        null,
+        document.title,
+        `${window.location.pathname}${window.location.search}`
+      );
+
+      if (result.error) {
+        setStornowayImportNotice({ kind: "error", text: result.error });
+        return;
+      }
+
+      if (readImportedLineIds(window.sessionStorage).includes(result.payload.lineId)) {
+        setStornowayImportNotice({
+          kind: "info",
+          text: `La demande ${result.payload.requestNumber} a déjà été ajoutée pendant cette session.`,
+        });
+        return;
+      }
+
+      const nextJob = buildStornowayJob(result.payload, allFits);
+      setImportPreview((previous) =>
+        previous.some((job) => job.sourceLineId === nextJob.sourceLineId)
+          ? previous
+          : previous.concat(nextJob)
+      );
+      setStornowayImportNotice({
+        kind: "success",
+        text: `Demande ${result.payload.requestNumber} prête à vérifier avant l’ajout.`,
+      });
+    }
+
+    window.addEventListener("hashchange", handleStornowayHashChange);
+    return () => window.removeEventListener("hashchange", handleStornowayHashChange);
+  }, [allFits]);
+
+
   const filteredFits = fitList.filter((f) =>
     f.name.toLowerCase().includes(fitQuery.toLowerCase())
   );
@@ -646,6 +787,8 @@ const fitList = useMemo(() => {
   );
 
   useEffect(() => {
+    // Reset the quantity form when Luce chooses another fit.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCounts(Object.fromEntries(activeSizes.map((size) => [size, 0])));
   }, [activeSizes]);
 
@@ -661,21 +804,6 @@ const fitList = useMemo(() => {
 
   function resetCounts() {
     setCounts(Object.fromEntries(activeSizes.map((size) => [size, 0])));
-  }
-
-  function buildJobQueue(job) {
-    const queue = [];
-    for (const size of job.sizes || []) {
-      const count = job.counts[size] || 0;
-      for (let i = 0; i < count; i += 1) {
-        queue.push({
-          fitName: job.fitName,
-          desc: job.desc,
-          size,
-        });
-      }
-    }
-    return queue;
   }
 
   function addCurrentFitToBatch() {
@@ -817,6 +945,32 @@ window.location.href =
     setBatchJobs((prev) => prev.filter((job) => job.id !== jobId));
   }
 
+  function confirmImportPreview() {
+    const unresolved = importPreview.some(
+      (job) => !job.fitKey || !allFits[job.fitKey]
+    );
+
+    if (unresolved) {
+      alert("Choisir un fit pour chaque item non reconnu avant d’importer.");
+      return;
+    }
+
+    const sourceLineIds = importPreview
+      .map((job) => job.sourceLineId)
+      .filter(Boolean);
+    rememberImportedLineIds(window.sessionStorage, sourceLineIds);
+
+    setBatchJobs((prev) => prev.concat(importPreview));
+    setImportPreview([]);
+
+    if (sourceLineIds.length > 0) {
+      setStornowayImportNotice({
+        kind: "success",
+        text: "La demande Stornoway a été ajoutée à la liste d’impression.",
+      });
+    }
+  }
+
   function addExtraLabelsToFillSheet() {
     if (labelsNeededToFillSheet === 0 || batchJobs.length === 0) return;
 
@@ -869,11 +1023,8 @@ window.location.href =
     setBatchJobs((prev) => prev.concat(extraJobs));
   }
 
-  const batchQueue = useMemo(() => {
-    return batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
-  }, [batchJobs]);
-
-  const pages = useMemo(() => chunk(batchQueue, LABELS_PER_PAGE), [batchQueue]);
+  const batchQueue = batchJobs.reduce((acc, job) => acc.concat(buildJobQueue(job)), []);
+  const pages = chunk(batchQueue, LABELS_PER_PAGE);
   const totalLabels = batchQueue.length;
   const totalSheets = Math.ceil(totalLabels / LABELS_PER_PAGE);
   const labelsNeededToFillSheet =
@@ -917,6 +1068,49 @@ overflowY: "auto",
             <p style={{ margin: "6px 0 0", fontSize: "14px", color: "#666" }}>
               Prépare les étiquettes par fit pour des feuilles de 14 en format paysage.
             </p>
+            <a
+              href={STORNOWAY_PORTAL_URL}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "42px",
+                marginTop: "14px",
+                padding: "0 14px",
+                borderRadius: "10px",
+                background: "#173a5e",
+                color: "#fff",
+                fontSize: "14px",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              Demandes Stornoway
+            </a>
+            {stornowayImportNotice && (
+              <div
+                role={stornowayImportNotice.kind === "error" ? "alert" : "status"}
+                style={{
+                  marginTop: "10px",
+                  padding: "10px 12px",
+                  borderRadius: "10px",
+                  border:
+                    stornowayImportNotice.kind === "error"
+                      ? "1px solid #fecaca"
+                      : "1px solid #bbd8cb",
+                  background:
+                    stornowayImportNotice.kind === "error" ? "#fef2f2" : "#edf7f2",
+                  color:
+                    stornowayImportNotice.kind === "error" ? "#991b1b" : "#155e45",
+                  fontSize: "13px",
+                  lineHeight: 1.4,
+                }}
+              >
+                {stornowayImportNotice.text}
+              </div>
+            )}
           </div>
 
          <label
@@ -972,7 +1166,11 @@ overflowY: "auto",
                       alignItems: "center",
                     }}
                   >
-                    <strong>{job.fitName}</strong>
+                    <strong>
+                      {job.fitName === "UNKNOWN"
+                        ? `Fit à choisir — ${job.incomingFitName || "non reconnu"}`
+                        : job.fitName}
+                    </strong>
 
                     <button
                       type="button"
@@ -1015,7 +1213,10 @@ overflowY: "auto",
                                   fitKey: selectedFitKey,
                                   fitName: selectedFit.name,
                                   desc: selectedFit.desc,
-                                  sizes: selectedFit.sizes || NUMERIC_SIZES,
+                                  sizes: mergeSizeOrder(
+                                    selectedFit.sizes || NUMERIC_SIZES,
+                                    item.importedSizes || []
+                                  ),
                                   parseError: Object.keys(item.counts).length === 0,
                                   manualOverride: false,
                                 }
@@ -1040,6 +1241,12 @@ overflowY: "auto",
                     </select>
                   )}
 
+                  {job.sourceLineId && (
+                    <div style={{ marginTop: "6px", fontSize: "12px", color: "#475569" }}>
+                      Stornoway · demande {job.requestNumber} · lot {job.lotNumber}
+                    </div>
+                  )}
+
                   {job.parseError ? (
                     <div style={{ color: "#b91c1c", fontSize: "13px", marginTop: "4px" }}>
                       Le PDF n’a pas pu être lu correctement. Vérifier avant d’importer.
@@ -1047,7 +1254,7 @@ overflowY: "auto",
                   ) : (
                     <div style={{ marginTop: "4px" }}>
                       {Object.entries(job.counts)
-                        .filter(([_, v]) => v > 0)
+                        .filter(([, value]) => value > 0)
                         .map(([size, qty]) => `${size}×${qty}`)
                         .join(" • ")}
                     </div>
@@ -1058,17 +1265,7 @@ overflowY: "auto",
               <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
                 <button
                   type="button"
-                  onClick={() => {
-                    const unresolved = importPreview.some((job) => job.fitName === "UNKNOWN");
-
-                    if (unresolved) {
-                      alert("Choisir un fit pour chaque item UNKNOWN avant d’importer.");
-                      return;
-                    }
-
-                    setBatchJobs((prev) => prev.concat(importPreview));
-                    setImportPreview([]);
-                  }}
+                  onClick={confirmImportPreview}
                 >
                   Confirmer l’importation
                 </button>
